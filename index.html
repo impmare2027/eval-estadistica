@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#EEF2EF">
+<title>Estadística y Probabilidad I — Evaluación integral de la Unidad 1 (Lecciones 1 a 4) · CCH</title>
+<style>
+  :root{
+    --paper:#EEF2EF;
+    --paper-line:rgba(22,35,58,0.07);
+    --card:#FFFFFF;
+    --ink:#16233A;
+    --ink-soft:#4A5A75;
+    --wire:#C2CBC5;
+    --edge:#D7DDD9;
+    --line-blue:#2B6CB0;
+    --area-1:#FFA53D;
+    --area-2:#FF6F59;
+    --correct:#2F855A;
+    --correct-bg:#E7F3EC;
+    --incorrect:#C1443D;
+    --incorrect-bg:#FBEAE9;
+    --chip-bg:#FFF6E9;
+    --chip-edge:#E0A94A;
+    --chip-ink:#6B4A16;
+    --radius:14px;
+    --shadow:0 2px 10px rgba(22,35,58,0.08), 0 1px 2px rgba(22,35,58,0.06);
+    --sans:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --serif:Georgia, 'Times New Roman', serif;
+    --mono:ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    --hdr-h:72px;
+    --pad:16px;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; font-family:var(--sans); color:var(--ink); line-height:1.5;
+    background:
+      repeating-linear-gradient(0deg, var(--paper-line) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(90deg, var(--paper-line) 0 1px, transparent 1px 32px),
+      var(--paper);
+    overflow-x:hidden;
+  }
+  body.arrastrando{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; color:var(--ink); }
+  button{ font-family:inherit; touch-action:manipulation; }
+  .mono{ font-family:var(--mono); }
+  .hidden{ display:none !important; }
+  main{ max-width:1040px; margin:0 auto; padding:18px var(--pad) 40px; }
+
+  /* ===== Encabezado fijo y compacto ===== */
+  header{
+    position:sticky; top:0; z-index:40;
+    background:rgba(238,242,239,0.96); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--paper-line);
+    padding:8px var(--pad) 6px;
+  }
+  .header-inner{ max-width:1040px; margin:0 auto; }
+  .eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--ink-soft); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hdr-row{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:1px 0 5px; }
+  .hdr-title{ font-family:var(--serif); font-weight:600; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .score-tag{ font-family:var(--mono); font-size:12px; color:var(--ink-soft); white-space:nowrap; flex:0 0 auto; }
+  .score-tag b{ color:var(--ink); }
+
+  /* Barra de avance: el ancho de cada tramo es proporcional a su valor en la calificación */
+  .steps{ display:flex; gap:3px; align-items:stretch; }
+  .step{
+    flex:1 1 0; min-width:11px; height:26px; padding:9px 0; border:0; background:none; cursor:pointer; position:relative;
+  }
+  .step::before{ content:''; display:block; height:8px; border-radius:5px; background:#D3DAD5; transition:background .2s, height .15s, transform .15s; }
+  .step.b2-ini{ margin-left:7px; }
+  .step.abierto::before{ background:#9AA7B8; }
+  .step.hecho::before{ background:var(--correct); }
+  .step.activo::before{ background:var(--ink); transform:scaleY(1.5); }
+  .step.hecho.activo::before{ background:#1E5B3C; }
+  .step:disabled{ cursor:not-allowed; }
+  .step:focus-visible{ outline:2px solid var(--line-blue); outline-offset:1px; border-radius:6px; }
+  .steps-legend{ display:flex; justify-content:space-between; gap:8px; font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-top:-2px; }
+
+  /* ===== Páginas ===== */
+  .pagina{ display:none; }
+  .pagina.active{ display:block; animation:fade .3s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); }
+  .act-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .bloque-badge{ font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:linear-gradient(90deg,var(--area-1),var(--area-2)); padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .bloque-badge .corto{ display:none; }
+  .valor-pill{
+    font-family:var(--mono); font-size:11.5px; font-weight:700; color:var(--ink); background:#fff; border:1.5px solid var(--ink);
+    padding:2px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .valor-pill small{ font-weight:400; color:var(--ink-soft); font-size:10.5px; }
+  .valor-pill.alto{ background:var(--ink); color:#fff; }
+  .valor-pill.alto small{ color:#C9D3E3; }
+  .valor-pill.bajo{ border-color:var(--wire); color:var(--ink-soft); }
+  .valor-pill.perdido{ border-color:var(--incorrect); color:var(--incorrect); background:var(--incorrect-bg); }
+  .valor-pill.ganado{ border-color:var(--correct); color:#1E5B3C; background:var(--correct-bg); }
+  .pagina h2{ font-size:clamp(17px,4.4vw,23px); line-height:1.25; margin-bottom:4px; }
+  .contexto{ color:var(--ink-soft); max-width:78ch; margin:0 0 12px; font-size:14px; }
+  .contexto strong, .contexto b{ color:var(--ink); }
+
+  /* ===== Registro ===== */
+  .registro-wrap{ display:grid; gap:16px; max-width:520px; margin:8px auto 0; }
+  .registro-card{ padding:24px 20px; }
+  .registro-card h1{ font-size:22px; line-height:1.2; margin-bottom:6px; }
+  .registro-card p.sub{ color:var(--ink-soft); font-size:13.5px; margin:0 0 16px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; }
+  .field input{
+    width:100%; padding:11px 12px; border:1.5px solid var(--edge); border-radius:9px;
+    font-family:var(--sans); font-size:16px; color:var(--ink); background:#fff;
+  }
+  .field input:focus{ outline:2px solid var(--line-blue); outline-offset:1px; border-color:var(--line-blue); }
+  .field .err{ font-size:12px; color:var(--incorrect); margin:4px 0 0; display:none; }
+  .field.invalid input{ border-color:var(--incorrect); }
+  .field.invalid .err{ display:block; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
+    background:var(--ink); color:#fff; border:1.5px solid var(--ink); border-radius:10px;
+    padding:12px 20px; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; transition:background .2s, opacity .2s;
+  }
+  .btn:hover{ background:#243352; }
+  .btn:focus-visible{ outline:2px solid var(--line-blue); outline-offset:2px; }
+  .btn.full{ width:100%; }
+  .btn.ghost-btn{ background:transparent; color:var(--ink-soft); border-color:var(--edge); font-weight:500; }
+  .btn.ghost-btn:hover{ border-color:var(--ink-soft); color:var(--ink); background:transparent; }
+  .btn.verde{ background:var(--correct); border-color:var(--correct); }
+  .btn.verde:hover{ background:#246b49; }
+  .btn.verde.secondary{ background:transparent; color:var(--correct); }
+  .btn.verde.secondary:hover{ background:var(--correct-bg); }
+  .btn.sm{ padding:8px 14px; font-size:13.5px; }
+  .resume-box{ border:1.5px solid var(--chip-edge); background:var(--chip-bg); color:var(--chip-ink); border-radius:12px; padding:12px 14px; margin-bottom:16px; font-size:13.5px; }
+  .resume-box .row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  details.info{ padding:4px 16px; }
+  details.info summary{ cursor:pointer; font-weight:600; font-size:14px; padding:10px 0; list-style-position:inside; }
+  details.info ol{ margin:0 0 12px; padding-left:20px; font-size:13.5px; color:var(--ink-soft); }
+  details.info li{ margin-bottom:6px; }
+  details.info li b{ color:var(--ink); }
+
+  /* ===== Tabla de ponderación / resultados ===== */
+  .tabla-wrap{ overflow-x:auto; margin:0 -4px 12px; padding:0 4px; }
+  table.pond{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.pond th, table.pond td{ padding:6px 6px; border-bottom:1px solid var(--paper-line); text-align:right; white-space:nowrap; }
+  table.pond th:first-child, table.pond td:first-child{ text-align:left; white-space:normal; }
+  table.pond th{ font-family:var(--mono); font-size:10px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:.03em; }
+  table.pond td{ font-family:var(--mono); }
+  table.pond td:first-child{ font-family:var(--sans); }
+  table.pond tr.sub td{ font-weight:700; background:#F4F6F4; }
+  table.pond tr.tot td{ font-weight:700; border-top:1.5px solid var(--ink); border-bottom:0; }
+  table.pond tr.dest td{ background:#FFF3E0; }
+  table.pond td .tag{ font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); display:block; }
+
+  /* ===== Actividades de arrastrar: tablero + banco ===== */
+  .drag-layout{ display:block; }
+  .board{ padding:14px 12px 16px; margin-bottom:12px; }
+  .board-title{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:10px; }
+
+  /* Árbol del mapa */
+  .tree{ display:flex; flex-direction:column; align-items:center; }
+  .root-box{ font-family:var(--serif); font-weight:600; font-size:14px; background:var(--ink); color:#fff; border-radius:10px; padding:7px 18px; text-align:center; }
+  .stem{ width:2px; height:14px; background:var(--wire); }
+  .ramas{ --gap:10px; display:grid; grid-template-columns:repeat(var(--n),minmax(0,1fr)); gap:var(--gap); width:100%; position:relative; padding-top:14px; }
+  .ramas::before{
+    content:''; position:absolute; top:0; height:2px; background:var(--wire);
+    left:calc((100% - (var(--n) - 1) * var(--gap)) / (2 * var(--n)));
+    right:calc((100% - (var(--n) - 1) * var(--gap)) / (2 * var(--n)));
+  }
+  .rama{ position:relative; display:flex; flex-direction:column; min-width:0; }
+  .rama::before{ content:''; position:absolute; top:-14px; left:calc(50% - 1px); width:2px; height:14px; background:var(--wire); }
+  .hijos{ display:flex; flex-direction:column; gap:8px; margin:0 0 0 9px; padding:10px 0 0 11px; border-left:2px solid var(--wire); }
+  .hijos .zona{ position:relative; }
+  .hijos .zona::after{ content:''; position:absolute; left:-13px; top:calc(50% - 1px); width:11px; height:2px; background:var(--wire); }
+
+  .zona{
+    border:2px dashed var(--wire); border-radius:12px; background:#FBFCFB;
+    padding:7px 8px; min-height:54px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    text-align:center; cursor:pointer; transition:border-color .15s, background .15s, box-shadow .15s; min-width:0;
+  }
+  .zona:focus-visible{ outline:2px solid var(--line-blue); outline-offset:2px; }
+  .z-label{ font-family:var(--serif); font-weight:600; font-size:13.5px; line-height:1.2; color:var(--ink); overflow-wrap:anywhere; }
+  .z-content{ font-size:11.5px; color:#35513F; line-height:1.3; }
+  .z-content:empty{ display:none; }
+  .zona.rama-z{ background:#F1F4F8; }
+  .zona.ok{ border-style:solid; border-color:var(--correct); background:var(--correct-bg); cursor:default; }
+  .zona.ok .z-label::before{ content:'✓ '; color:var(--correct); }
+  .zona.sobre{ border-color:var(--line-blue); border-style:solid; background:#E3EEFA; box-shadow:0 0 0 3px rgba(43,108,176,.22); }
+  .zona.mal{ border-color:var(--incorrect); border-style:solid; background:var(--incorrect-bg); animation:shake .3s; }
+  .armado .zona:not(.llena){ border-color:var(--line-blue); }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+
+  /* Categorías de clasificación */
+  .bins{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .zona.bin{ align-items:stretch; justify-content:flex-start; text-align:left; padding:8px 9px; min-height:68px; gap:5px; }
+  .bin-head{ display:flex; align-items:center; gap:7px; }
+  .bin-dot{ width:10px; height:10px; border-radius:50%; flex:0 0 auto; }
+  .bin-head .z-label{ flex:1; }
+  .bin-count{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); }
+  .bin-list{ display:flex; flex-direction:column; gap:4px; }
+  .bin-item{ font-size:11.5px; line-height:1.3; padding:4px 7px; border-radius:7px; background:var(--correct-bg); border:1px solid #BFDccb; color:#1E5B3C; }
+
+  /* Banco de tarjetas */
+  .dock{ padding:10px 12px 12px; }
+  .dock-head{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:6px; }
+  .dock-title{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; }
+  .dock-count{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); white-space:nowrap; }
+  .solo-escritorio{ display:none; }
+  .dock-msg{ font-size:12.5px; min-height:19px; margin-bottom:6px; color:var(--ink-soft); }
+  .dock-msg.ok{ color:#1E5B3C; font-weight:600; }
+  .dock-msg.bad{ color:#8E332C; font-weight:600; }
+  .dock-body{ display:flex; align-items:center; gap:8px; }
+  .chips{ flex:1; display:flex; flex-direction:column; gap:8px; min-width:0; }
+  .chip{
+    display:block; width:100%; text-align:left; font-family:var(--sans);
+    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:none; cursor:grab;
+    background:var(--chip-bg); border:1.5px solid var(--chip-edge); border-radius:11px; padding:10px 12px;
+    font-size:13.5px; color:var(--chip-ink); line-height:1.35; box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .chip::before{ content:'⠿'; float:left; margin-right:8px; opacity:.55; font-size:15px; line-height:1.2; }
+  .chip:focus-visible{ outline:2px solid var(--line-blue); outline-offset:2px; }
+  .chip.sel{ border-color:var(--line-blue); background:#E3EEFA; color:var(--ink); box-shadow:0 0 0 3px rgba(43,108,176,.22); }
+  .chip.arrastrando{ opacity:.3; }
+  .chip.rebote{ animation:shake .3s; border-color:var(--incorrect); }
+  .nav-btn{
+    flex:0 0 auto; width:38px; height:46px; border-radius:10px; border:1.5px solid var(--edge); background:#fff; color:var(--ink);
+    font-size:20px; line-height:1; cursor:pointer;
+  }
+  .nav-btn:disabled{ opacity:.35; cursor:default; }
+  .dock-done{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .dock-done p{ margin:0; font-size:13.5px; color:#1E5B3C; font-weight:600; }
+  .dock-done p small{ display:block; font-weight:400; color:var(--ink-soft); font-size:12px; }
+
+  /* Tarjeta fantasma que sigue al dedo */
+  .ghost{
+    position:fixed; z-index:500; left:0; top:0; pointer-events:none; width:min(250px, calc(100vw - 24px));
+    background:var(--chip-bg); border:2px solid var(--chip-edge); border-radius:12px; padding:6px 10px 8px;
+    box-shadow:0 10px 26px rgba(22,35,58,.3); color:var(--chip-ink); font-size:12px; line-height:1.3; will-change:transform;
+  }
+  .ghost .g-dest{ display:block; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; color:var(--ink-soft); }
+  .ghost .g-text{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .ghost.sobre{ border-color:var(--line-blue); background:#E3EEFA; color:var(--ink); }
+  .ghost.sobre .g-dest{ color:var(--line-blue); font-weight:700; }
+
+  /* --- Teléfono: un mapa por pantalla, banco fijo abajo con una tarjeta a la vez --- */
+  @media (max-width:859px){
+    .drag-layout .dock{
+      position:sticky; bottom:0; z-index:30; margin:0 calc(-1 * var(--pad)); border-radius:16px 16px 0 0;
+      box-shadow:0 -6px 18px rgba(22,35,58,.14); border-top:1px solid var(--edge);
+      padding:9px var(--pad) calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    .chips .chip{ display:none; }
+    .chips .chip.current{ display:block; }
+    .chips{ min-height:62px; justify-content:center; }
+    /* Mientras se resuelve, el tablero no cambia de tamaño: así nada se mueve bajo el dedo.
+       Al completar la actividad se despliega el texto completo para repasar. */
+    .board:not(.completo) .zona.ok .z-content{ display:block; align-self:stretch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .board:not(.completo) .bin-list{ display:none; }
+    .contexto{ font-size:13.5px; margin-bottom:10px; }
+    .dock-msg{ font-size:12px; }
+  }
+  @media (max-width:560px){
+    body.en-actividad .eyebrow, body.en-actividad .steps-legend{ display:none; }
+    body.en-actividad main{ padding-top:12px; }
+    .bloque-badge .largo{ display:none; }
+    .bloque-badge .corto{ display:inline; }
+    .chip{ font-size:13px; padding:8px 11px; }
+    .root-box{ padding:5px 16px; font-size:13.5px; }
+    .stem{ height:10px; }
+    .ramas{ padding-top:10px; }
+    .rama::before{ top:-10px; height:10px; }
+    .act-top{ margin-bottom:6px; }
+    .board{ padding:10px 10px 12px; }
+    .zona{ min-height:52px; }
+    .zona.bin{ min-height:56px; }
+    .hijos{ gap:6px; padding-top:8px; }
+    .bins{ gap:8px; }
+    /* mapas sin sub-ramas: casillas apiladas a todo lo ancho */
+    .tree.apila{ align-items:stretch; }
+    .tree.apila .root-box{ align-self:flex-start; }
+    .tree.apila .stem{ display:none; }
+    .tree.apila .ramas{ grid-template-columns:1fr; gap:8px; padding:10px 0 0 13px; margin-left:16px; width:auto; border-left:2px solid var(--wire); }
+    .tree.apila .ramas::before{ display:none; }
+    .tree.apila .rama::before{ top:calc(50% - 1px); left:-13px; width:11px; height:2px; }
+  }
+  /* --- Teléfono acostado: tablero a la izquierda y banco (una tarjeta) a la derecha --- */
+  @media (max-width:859px) and (orientation:landscape) and (max-height:520px){
+    .drag-layout{ display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:12px; align-items:start; }
+    .chip{ font-size:12.5px; padding:8px 10px; }
+    .nav-btn{ width:32px; }
+    .drag-layout .dock{ position:sticky; top:calc(var(--hdr-h) + 8px); bottom:auto; margin:0; border-radius:14px; border-top:0; box-shadow:var(--shadow); padding:10px 12px 12px; }
+    .board{ margin-bottom:0; }
+    .eyebrow, .steps-legend{ display:none; }
+  }
+  /* --- Escritorio: mapa a la izquierda, banco completo a la derecha --- */
+  @media (min-width:860px){
+    :root{ --pad:24px; }
+    main{ padding-top:26px; }
+    .drag-layout{ display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start; }
+    .board{ padding:22px 20px; margin-bottom:0; }
+    .dock{ position:sticky; top:calc(var(--hdr-h) + 14px); max-height:calc(100vh - var(--hdr-h) - 28px); overflow-y:auto; padding:14px 14px 16px; }
+    .nav-btn, .solo-movil{ display:none; }
+    .solo-escritorio{ display:inline; }
+    .zona{ min-height:70px; padding:9px 12px; }
+    .ramas{ --gap:16px; }
+    .bins{ grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); }
+    .zona.bin{ min-height:120px; }
+    .z-content{ font-size:12px; }
+    .hdr-title{ font-size:17px; }
+  }
+
+  /* ===== Material de apoyo (tablas y figura) ===== */
+  .apoyo{ padding:14px 14px 16px; margin-bottom:14px; }
+  .data-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .data-table th, .data-table td{ padding:6px 8px; text-align:right; border-bottom:1px solid var(--paper-line); }
+  .data-table th:first-child, .data-table td:first-child{ text-align:left; }
+  .data-table th{ font-family:var(--mono); font-size:10.5px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:.03em; }
+  .data-table td{ font-family:var(--mono); }
+  .data-table tr.total td{ font-weight:700; border-top:1.5px solid var(--ink); border-bottom:0; }
+  .bar-cell{ display:flex; align-items:center; gap:8px; }
+  .bar-track{ flex:1; height:10px; background:#EEF2EF; border-radius:5px; overflow:hidden; min-width:40px; }
+  .bar-fill{ height:100%; background:linear-gradient(90deg,var(--area-1),var(--area-2)); border-radius:5px; }
+  .rect-flex{ display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; justify-content:center; }
+  .rect-fig{ flex:1 1 280px; max-width:440px; }
+  .rect-fig svg{ width:100%; height:auto; display:block; background:#FFF9EF; border:1px solid #E7D9BC; border-radius:10px; }
+  .rect-tablas{ flex:1 1 250px; display:grid; grid-template-columns:1fr 1fr; gap:0 14px; max-width:420px; }
+  .rect-tablas .data-table th, .rect-tablas .data-table td{ text-align:center; padding:4px 4px; }
+  .rect-tablas .data-table td:first-child{ font-weight:700; }
+  .fig-nota{ font-size:11.5px; color:var(--ink-soft); margin:8px 0 0; text-align:center; }
+
+  /* ===== Preguntas de opción múltiple ===== */
+  .q-card{ padding:14px 14px 16px; animation:fade .3s ease; }
+  .q-meta{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .q-num{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); }
+  .q-prompt{ margin:0 0 12px; font-size:15px; }
+  .q-options{ display:flex; flex-direction:column; gap:8px; }
+  .bubble-option{
+    display:flex; align-items:flex-start; gap:10px; width:100%;
+    background:#fff; border:1.5px solid var(--edge); border-radius:10px;
+    padding:10px 12px; text-align:left; cursor:pointer; font-family:var(--sans); font-size:14.5px; color:var(--ink);
+    transition:border-color .15s, background .15s;
+  }
+  .bubble-option:hover:not(:disabled){ border-color:var(--line-blue); }
+  .bubble-option:focus-visible{ outline:2px solid var(--line-blue); outline-offset:2px; }
+  .bubble{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%; margin-top:-2px;
+    border:1.5px solid var(--ink-soft); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:12px; font-weight:600; color:var(--ink-soft);
+  }
+  .bubble-option.is-correct{ border-color:var(--correct); background:var(--correct-bg); color:var(--ink); opacity:1 !important; }
+  .bubble-option.is-correct .bubble{ background:var(--correct); border-color:var(--correct); color:#fff; }
+  .bubble-option.is-wrong{ border-color:var(--incorrect); background:var(--incorrect-bg); }
+  .bubble-option.is-wrong .bubble{ background:var(--incorrect); border-color:var(--incorrect); color:#fff; }
+  .bubble-option.is-wrong.nuevo{ animation:shake .3s; }
+  .bubble-option:disabled{ cursor:default; }
+  .q-options.resuelta .bubble-option:not(.is-correct){ opacity:.5; }
+  .hint-btn{ margin-top:10px; background:none; border:none; color:var(--line-blue); font-size:13.5px; cursor:pointer; padding:4px 0; font-family:var(--sans); }
+  .hint-btn:disabled{ color:var(--ink-soft); cursor:default; }
+  .hint-text{ font-size:13.5px; color:var(--ink-soft); margin:6px 0 0; }
+  .q-feedback{ margin-top:12px; padding:10px 12px; border-radius:8px; font-size:14px; }
+  .feedback-correct{ background:var(--correct-bg); color:#1E5B3C; }
+  .feedback-incorrect{ background:var(--incorrect-bg); color:#8E332C; }
+  .q-next{ margin-top:14px; display:flex; justify-content:flex-end; }
+  .repaso{ padding:14px 14px 6px; }
+  .repaso h3{ font-size:16px; }
+  .repaso ol{ margin:8px 0 10px; padding-left:20px; font-size:13.5px; }
+  .repaso li{ margin-bottom:10px; }
+  .repaso li .resp{ display:block; color:#1E5B3C; }
+  .repaso li .nota{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); }
+  .repaso li .nota.err{ color:var(--incorrect); }
+
+  /* ===== Resultados ===== */
+  .cierre-card{ padding:20px 16px 22px; text-align:center; }
+  .final-score{ font-family:var(--serif); font-size:56px; line-height:1; margin:10px 0 0; }
+  .final-score small{ font-size:22px; color:var(--ink-soft); }
+  .final-pct{ font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); margin:6px 0 14px; }
+  .summary-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:12px 0; text-align:left; }
+  .summary-tile{ background:#F4F6F4; border-radius:10px; padding:10px 12px; }
+  .summary-tile b{ display:block; font-family:var(--serif); font-size:19px; }
+  .summary-tile span{ font-size:11px; color:var(--ink-soft); }
+  .section-label{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin:18px 0 6px; text-align:left; }
+  .send-block{ margin:16px 0 14px; padding:16px 14px; background:#F4F6F4; border-radius:12px; }
+  .send-help{ font-size:13px; color:var(--ink-soft); max-width:58ch; margin:12px auto 0; }
+  .send-status{ font-size:13px; margin:10px auto 0; max-width:58ch; min-height:1em; overflow-wrap:anywhere; }
+  .send-status.ok{ color:#1E5B3C; } .send-status.warn{ color:#8E332C; }
+  .acciones{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .aviso{ margin:14px auto 0; font-size:13px; background:var(--chip-bg); border:1px dashed var(--chip-edge); color:var(--chip-ink); padding:8px 12px; border-radius:8px; max-width:62ch; text-align:left; }
+
+  /* ===== Modo profesor ===== */
+  .prof{ padding:16px 16px 18px; border:2px solid var(--ink); }
+  .prof h3{ font-size:17px; }
+  .prof p, .prof li{ font-size:13px; color:var(--ink-soft); }
+  .prof .estado{ font-family:var(--mono); font-size:12px; padding:8px 10px; border-radius:8px; background:#F4F6F4; color:var(--ink); overflow-wrap:anywhere; }
+  .prof .estado.ok{ background:var(--correct-bg); color:#1E5B3C; }
+  .prof .estado.warn{ background:var(--incorrect-bg); color:#8E332C; }
+  .prof textarea{ width:100%; min-height:90px; font-family:var(--mono); font-size:12px; padding:8px; border:1.5px solid var(--edge); border-radius:8px; }
+  .prof .row{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12px; margin:30px auto 0; padding:0 var(--pad) 28px; max-width:1040px; }
+  footer a{ color:inherit; }
+
+  @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<noscript><p style="padding:20px;font-family:sans-serif">Esta actividad requiere JavaScript activado en el navegador.</p></noscript>
+
+<header id="hdr">
+  <div class="header-inner">
+    <div class="eyebrow" id="eyebrow">CCH Oriente · Estadística y Probabilidad I · Unidad 1</div>
+    <div class="hdr-row">
+      <div class="hdr-title" id="hdrTitle">Evaluación integral · Lecciones 1 a 4</div>
+      <div class="score-tag" id="scoreTag"></div>
+    </div>
+    <nav class="steps" id="steps" aria-label="Avance de la evaluación"></nav>
+    <div class="steps-legend" aria-hidden="true"><span>Bloque 1 · L1-2</span><span>ancho = valor</span><span>Bloque 2 · L3-4</span></div>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== REGISTRO ===================== -->
+  <section class="pagina active" id="p-registro">
+    <div class="registro-wrap">
+      <div class="card registro-card">
+        <h1>Evaluación integral de la Unidad 1</h1>
+        <p class="sub">Lecciones 1 a 4: conceptos básicos, fuentes de información y variables (Bloque 1); ramas de la estadística, población, muestra y muestreo (Bloque 2). Al terminar enviarás tu resultado a tu profesor.</p>
+        <div id="resumeBox" class="resume-box hidden"></div>
+        <div class="field" id="f-nombre">
+          <label for="inNombre">Nombre completo</label>
+          <input type="text" id="inNombre" placeholder="Ej. López Hernández Ana" autocomplete="name" maxlength="80">
+          <p class="err">Escribe tu nombre completo (nombre y apellidos).</p>
+        </div>
+        <div class="field" id="f-cuenta">
+          <label for="inCuenta">Número de cuenta</label>
+          <input type="text" id="inCuenta" placeholder="Ej. 418123456" inputmode="numeric" autocomplete="off" maxlength="10">
+          <p class="err">Ingresa un número de cuenta válido (8 a 10 dígitos, sin guiones).</p>
+        </div>
+        <div class="field" id="f-grupo">
+          <label for="inGrupo">Grupo CCH</label>
+          <input type="text" id="inGrupo" placeholder="Ej. 619-A" autocomplete="off" maxlength="12">
+          <p class="err">Escribe tu grupo.</p>
+        </div>
+        <button class="btn full" id="startBtn" type="button">Comenzar actividad →</button>
+      </div>
+
+      <details class="card info" id="infoBox" open>
+        <summary>¿Cómo funciona y cuánto vale cada parte?</summary>
+        <ol>
+          <li>Son <b>10 actividades en orden</b>: primero el Bloque 1 (Lecciones 1 y 2) y después el Bloque 2 (Lecciones 3 y 4). Cada mapa conceptual ocupa su propia pantalla.</li>
+          <li><b>Mapas y clasificaciones:</b> mantén presionada una tarjeta del banco inferior y arrástrala a su casilla. También puedes <b>tocar la tarjeta y luego tocar la casilla</b>.</li>
+          <li><b>Preguntas:</b> elige una opción y lee la retroalimentación. Debes llegar a la respuesta correcta para avanzar.</li>
+          <li><b>Solo suma puntos lo que aciertas al primer intento.</b> El valor de cada reactivo aparece siempre en pantalla.</li>
+          <li>Tu avance se guarda en este dispositivo: si se cierra la página, puedes continuar donde te quedaste.</li>
+        </ol>
+        <div class="tabla-wrap" id="tablaPesos"></div>
+      </details>
+      <div id="profBox"></div>
+    </div>
+  </section>
+
+  <!-- Las 10 actividades se generan aquí con JavaScript -->
+  <div id="acts"></div>
+
+  <!-- ===================== RESULTADOS ===================== -->
+  <section class="pagina" id="p-cierre">
+    <div class="act-top"><span class="bloque-badge">Resultados</span></div>
+    <h2>✅ Reporte final</h2>
+    <div class="card cierre-card">
+      <p id="cierreNombre" style="margin:0;color:var(--ink-soft);font-size:13.5px;"></p>
+      <div class="final-score" id="finalScore">0.0 <small>/ 10</small></div>
+      <p class="final-pct" id="finalPct"></p>
+
+      <div class="section-label">Por bloque</div>
+      <div class="summary-grid">
+        <div class="summary-tile"><b id="sumBloque1">0</b><span>Bloque 1 · Lecciones 1 y 2</span></div>
+        <div class="summary-tile"><b id="sumBloque2">0</b><span>Bloque 2 · Lecciones 3 y 4</span></div>
+      </div>
+
+      <div class="section-label">Por actividad (aciertos al primer intento y puntos)</div>
+      <div class="tabla-wrap" id="tablaResultados"></div>
+
+      <div id="sendBlock" class="send-block hidden">
+        <div class="acciones">
+          <a class="btn" id="sendBtn" href="#" target="_blank" rel="noopener">📤 Enviar mi resultado a mi profesor</a>
+          <button class="btn ghost-btn" id="copyBtn" type="button">Copiar mi resultado</button>
+        </div>
+        <p class="send-help">Se abrirá un formulario de Microsoft Forms con tus datos y calificación ya escritos. Si te pide iniciar sesión, usa tu <b>cuenta institucional</b>. Revisa tus datos, <b>presiona «Enviar»</b> y espera el mensaje de confirmación.</p>
+        <p class="send-status" id="sendStatus" aria-live="polite"></p>
+      </div>
+      <div class="acciones">
+        <button class="btn verde" id="downloadBtn" type="button">⬇ Descargar Reporte de Resultados en Excel (CSV)</button>
+        <button class="btn ghost-btn" id="restartBtn" type="button">Reiniciar actividad</button>
+      </div>
+      <p class="aviso" id="csvNote">Al descargar se guarda el archivo <b>resultado_TUCUENTA.csv</b> (búscalo en Descargas). Envíalo a tu profesor por el medio que te indique. No lo modifiques: incluye un código de verificación.</p>
+    </div>
+  </section>
+</main>
+
+<footer>Material auxiliar para Estadística y Probabilidad I · CCH Oriente, UNAM · página autocontenida (HTML + CSS + JavaScript nativo; funciona sin internet, salvo el envío a Forms) · <a href="https://github.com/impmare2027/eval-estadistica" target="_blank" rel="noopener">Código en GitHub</a></footer>
+
+<script>
+'use strict';
+
+/* ============================================================
+   CONFIGURACIÓN DEL PROFESOR
+   ------------------------------------------------------------
+   1) FORMS_PREFILL_URL: pega entre las comillas el "vínculo rellenado
+      previamente" de tu formulario de Microsoft Forms, en el que escribiste
+      los marcadores TOK_NOMBRE, TOK_CUENTA, TOK_GRUPO, TOK_FECHA, TOK_CALIF,
+      TOK_RESUMEN y TOK_DETALLE (uno por pregunta). Si lo dejas vacío, la
+      actividad solo ofrece la descarga del CSV.
+   2) PESOS: puntos que vale cada tipo de reactivo. Con los valores de abajo
+      el total es exactamente 10. Si los cambias, la calificación se sigue
+      reescalando a 0-10 y la interfaz muestra los valores ya reescalados.
+   Para revisar la configuración abre la página con  ?profesor=1  al final.
+============================================================ */
+const FORMS_PREFILL_URL = '';
+
+const PESOS = {
+  mapa: 0.2,          // por CADA mapa conceptual completo (diagnóstico; se reparte entre sus casillas)
+  clasificacion: 0.2, // por cada tarjeta clasificada (variables / tipos de muestreo)
+  caso: 0.3,          // por cada pregunta de opción múltiple
+  rectangulo: 0.7     // por cada pregunta del caso de los 12 rectángulos (mayor valor)
+};
+
+/* ============================================================
+   DATOS DE APOYO (tabla de transporte y población de rectángulos)
+============================================================ */
+const TRANSPORTE = [['Caminando',9],['Bicicleta',6],['Transporte público',25],['Auto particular',12],['Combi/microbús',8]];
+/* [base, altura] de los rectángulos 1 a 12, en unidades u */
+const RECTS = [[6,6],[8,5],[6,5],[5,3],[7,4],[6,2],[2,6],[5,7],[6,5],[1,6],[1,4],[4,2]];
+const RECT_COLORES = ['#DCE6F2','#EBE5A8','#F6F2CF','#D6E4D2','#E6D8D2','#DDE9F7','#EFE9A9','#D5DDE8','#E4DCEA','#D9E3D0','#F4E8CF','#D6E8F3'];
+
+/* ============================================================
+   CONTENIDO — 10 actividades en orden estricto
+   Bloque 1 (Lecciones 1 y 2) y después Bloque 2 (Lecciones 3 y 4).
+   El profesor puede editar aquí términos, definiciones y preguntas.
+============================================================ */
+const ACTS = [
+  /* ---------------- BLOQUE 1 ---------------- */
+  { id:'m1', bloque:1, tipo:'mapa', icono:'🧠', corto:'Mapa 1', titulo:'Mapa 1 de 5 · Términos clave',
+    contexto:'Une cada <b>definición</b> con su término.',
+    banco:'Definiciones', raiz:'Conceptos básicos',
+    ramas:[{key:'estadistica'},{key:'dato'},{key:'variable'}],
+    items:[
+      { key:'estadistica', etiqueta:'Estadística', def:'Ciencia que recolecta, organiza, presenta, analiza e interpreta datos para apoyar la toma de decisiones.' },
+      { key:'dato', etiqueta:'Dato', def:'Valor concreto obtenido al observar o medir una característica en un individuo o elemento de estudio.' },
+      { key:'variable', etiqueta:'Variable', def:'Característica o atributo de interés que puede tomar distintos valores entre los individuos de un estudio.' }
+    ]},
+  { id:'m2', bloque:1, tipo:'mapa', icono:'🧠', corto:'Mapa 2', titulo:'Mapa 2 de 5 · Clasificación de una variable',
+    contexto:'Une cada <b>definición</b> con su tipo de variable.',
+    banco:'Definiciones', raiz:'Variable',
+    ramas:[{key:'cualitativa', hijos:['nominal','ordinal']},{key:'cuantitativa', hijos:['discreta','continua']}],
+    items:[
+      { key:'cualitativa', etiqueta:'Cualitativa', def:'Mide un atributo que NO es numérico: indica a qué categoría o grupo pertenece un individuo.' },
+      { key:'cuantitativa', etiqueta:'Cuantitativa', def:'Mide un atributo numérico: toma valores dentro de los números reales.' },
+      { key:'nominal', etiqueta:'Nominal', def:'Variable cualitativa en la que NO es posible establecer un orden entre sus categorías.' },
+      { key:'ordinal', etiqueta:'Ordinal', def:'Variable cualitativa en la que SÍ es posible establecer un orden único entre sus categorías.' },
+      { key:'discreta', etiqueta:'Discreta', def:'Variable cuantitativa que toma valores numerables (surge de contar), finitos o infinitos.' },
+      { key:'continua', etiqueta:'Continua', def:'Variable cuantitativa que toma una infinidad de valores dentro de un intervalo (surge de medir).' }
+    ]},
+  { id:'m3', bloque:1, tipo:'mapa', icono:'🧠', corto:'Mapa 3', titulo:'Mapa 3 de 5 · Fuentes de información',
+    contexto:'Une cada <b>definición</b> con su tipo de fuente.',
+    banco:'Definiciones', raiz:'Fuentes de información',
+    ramas:[{key:'primaria'},{key:'secundaria'}],
+    items:[
+      { key:'primaria', etiqueta:'Primaria', def:'Fuente de información que el propio investigador recolecta directamente, por ejemplo mediante encuestas, entrevistas u observación.' },
+      { key:'secundaria', etiqueta:'Secundaria', def:'Fuente de información ya existente, recopilada previamente por otra persona o institución (p. ej. INEGI, registros administrativos, bases de datos).' }
+    ]},
+  { id:'cv', bloque:1, tipo:'clasif', icono:'🏷️', corto:'Variables', titulo:'Clasifica las variables de una encuesta escolar',
+    contexto:'Orientación Educativa quiere conocer los hábitos de estudio de la generación. Lleva cada <b>variable</b> que van a medir a su categoría.',
+    banco:'Variables',
+    categorias:[
+      { key:'nominal', label:'Nominal', color:'#2B6CB0' }, { key:'ordinal', label:'Ordinal', color:'#7C5CBF' },
+      { key:'discreta', label:'Discreta', color:'#C17A1F' }, { key:'continua', label:'Continua', color:'#2F855A' }
+    ],
+    items:[
+      { texto:'Materia favorita del semestre (Matemáticas, Historia, Química, etc.)', cat:'nominal' },
+      { texto:'Nivel de dificultad percibido de un examen (muy fácil, fácil, difícil, muy difícil)', cat:'ordinal' },
+      { texto:'Número de libros leídos durante el semestre', cat:'discreta' },
+      { texto:'Promedio de calificaciones del semestre (con decimales)', cat:'continua' },
+      { texto:'Tipo de escuela de procedencia (pública, privada)', cat:'nominal' },
+      { texto:'Lugar obtenido en un concurso académico (1.º, 2.º, 3.º…)', cat:'ordinal' },
+      { texto:'Número de faltas acumuladas en el semestre', cat:'discreta' },
+      { texto:'Tiempo que tarda un estudiante en resolver un examen, en minutos (con decimales)', cat:'continua' }
+    ]},
+  { id:'ct', bloque:1, tipo:'casos', icono:'🚲', corto:'Transporte', titulo:'Caso: transporte al plantel',
+    contexto:'Se preguntó a <strong>60 estudiantes</strong> cuál es su <strong>medio de transporte principal</strong> para llegar al plantel. Consulta la tabla para responder.',
+    apoyo:'transporte',
+    items:[
+      { texto:'Según la tabla, ¿qué tipo de variable es "medio de transporte principal"?',
+        pista:'¿Sus categorías (caminando, bicicleta, transporte público...) tienen un orden natural, o no?',
+        opciones:[
+          {texto:'Cualitativa nominal', correcta:true, feedback:'Correcto: las categorías no tienen un orden entre sí, por lo que es cualitativa nominal.'},
+          {texto:'Cualitativa ordinal', feedback:'No hay un orden lógico entre "caminando", "bicicleta", "transporte público", etc.; por eso no es ordinal.'},
+          {texto:'Cuantitativa discreta', feedback:'Esta variable no se mide con números, sino con categorías; no es cuantitativa.'},
+          {texto:'Cuantitativa continua', feedback:'No hay una medición numérica aquí, sino una clasificación por categorías.'},
+          {texto:'No es una variable estadística', feedback:'Sí lo es: es una característica que varía entre los individuos de la muestra (cada estudiante elige un medio distinto).'}
+        ]},
+      { texto:'Según la tabla, ¿cuál es la moda de la distribución (el medio de transporte más frecuente)?',
+        pista:'La moda es la categoría con mayor frecuencia en la tabla.',
+        opciones:[
+          {texto:'Caminando', feedback:'Caminando tiene 9 de 60, muy por debajo de la categoría con mayor frecuencia.'},
+          {texto:'Bicicleta', feedback:'Bicicleta es la de menor frecuencia (6 de 60), no la moda.'},
+          {texto:'Transporte público', correcta:true, feedback:'Correcto: con 25 de 60 estudiantes, transporte público es la categoría con mayor frecuencia (la moda).'},
+          {texto:'Auto particular', feedback:'Auto particular tiene 12 de 60: es la segunda frecuencia más alta, pero no la mayor.'},
+          {texto:'Combi/microbús', feedback:'Combi/microbús tiene 8 de 60, por debajo de transporte público.'}
+        ]},
+      { texto:'¿Qué porcentaje de los 60 estudiantes usa transporte público como medio principal?',
+        pista:'Divide la frecuencia de "transporte público" entre el total (60) y multiplica por 100.',
+        opciones:[
+          {texto:'≈15.0%', feedback:'15.0% corresponde a "Caminando" (9/60), no a transporte público.'},
+          {texto:'≈20.0%', feedback:'20.0% corresponde a "Auto particular" (12/60), no a transporte público.'},
+          {texto:'≈41.7%', correcta:true, feedback:'Correcto: 25/60 × 100 ≈ 41.7%.'},
+          {texto:'≈13.3%', feedback:'13.3% corresponde a "Combi/microbús" (8/60), no a transporte público.'},
+          {texto:'≈10.0%', feedback:'10.0% corresponde a "Bicicleta" (6/60), no a transporte público.'}
+        ]},
+      { texto:'¿Qué tipo de gráfica NO sería adecuada para representar estos datos, y por qué?',
+        pista:'Piensa en qué tipo de variable requiere cada gráfica: ¿barras y sectores, o histograma?',
+        opciones:[
+          {texto:'El histograma, porque se usa para variables cuantitativas continuas agrupadas en clases, no para categorías', correcta:true, feedback:'Correcto: el histograma agrupa valores numéricos en intervalos; "medio de transporte" es una variable cualitativa, sin intervalos numéricos que agrupar.'},
+          {texto:'La gráfica de barras, porque solo sirve para variables cuantitativas', feedback:'Es al revés: la gráfica de barras es precisamente una de las más usadas para variables cualitativas como esta.'},
+          {texto:'La gráfica de sectores (pastel), porque no admite categorías', feedback:'La gráfica de sectores sí admite categorías: cada "rebanada" representa una categoría de una variable cualitativa.'},
+          {texto:'Ninguna gráfica es adecuada para este tipo de datos', feedback:'Sí hay gráficas adecuadas (barras o sectores); lo que no es adecuado es el histograma.'},
+          {texto:'El histograma, porque requiere al menos 100 datos', feedback:'El número de datos no es la razón; la razón es que el histograma es para variables cuantitativas continuas, no categóricas.'}
+        ]},
+      { texto:'Para construir la tabla, el profesor preguntó directamente a cada uno de los 60 estudiantes cuál es su medio de transporte. ¿Qué tipo de fuente de información es esta?',
+        pista:'¿Quién recolectó el dato: el propio profesor, o lo tomó de una base de datos ya existente?',
+        opciones:[
+          {texto:'Fuente primaria, porque el propio profesor recolectó los datos directamente de los estudiantes', correcta:true, feedback:'Correcto: una fuente primaria es la que el propio investigador recolecta de manera directa, como en este caso.'},
+          {texto:'Fuente secundaria, porque los datos ya existían antes de la encuesta', feedback:'Al contrario: los datos no existían antes; se generaron al aplicar la encuesta.'},
+          {texto:'No es una fuente de información, porque no proviene de una base de datos oficial', feedback:'Sí es una fuente de información; de hecho, recolectar los datos uno mismo es precisamente lo que define a una fuente primaria.'},
+          {texto:'Fuente secundaria, porque la tabla se construyó después de recolectar los datos', feedback:'El momento en que se organiza la tabla no define el tipo de fuente; lo relevante es quién recolectó el dato originalmente.'},
+          {texto:'Fuente primaria, pero solo porque el profesor usó una tabla para organizar los datos', feedback:'Es fuente primaria, pero no por usar una tabla: lo es porque el profesor recolectó el dato directamente de cada estudiante.'}
+        ]},
+      { texto:'Si además se registrara el tiempo exacto que tarda cada estudiante en llegar al plantel, en minutos y con decimales (por ejemplo, 23.5 min), ¿qué tipo de variable sería ese nuevo dato?',
+        pista:'¿Ese tiempo surge de contar algo, o de medir algo que puede tomar cualquier valor dentro de un intervalo?',
+        opciones:[
+          {texto:'Cuantitativa continua, porque surge de medir y puede tomar cualquier valor dentro de un intervalo', correcta:true, feedback:'Correcto: el tiempo de traslado se mide (no se cuenta) y puede tomar valores intermedios como 23.5 min, por lo que es cuantitativa continua.'},
+          {texto:'Cuantitativa discreta, porque se puede contar en minutos enteros', feedback:'Si se permiten decimales (23.5 min), el dato no proviene de contar valores enteros, sino de medir; eso corresponde a una variable continua.'},
+          {texto:'Cualitativa ordinal, porque se puede ordenar de menor a mayor tiempo', feedback:'Que los valores se puedan ordenar no la vuelve cualitativa: sigue siendo un número que resulta de medir, es decir, cuantitativa continua.'},
+          {texto:'Cualitativa nominal, porque cada estudiante da un valor distinto', feedback:'Que los valores varíen entre estudiantes no la hace nominal; el tiempo en minutos es un dato numérico, no una categoría.'},
+          {texto:'No es una variable estadística, porque depende del tráfico de cada día', feedback:'Sí es una variable estadística: es una característica medible que varía entre los individuos del estudio, sin importar qué la influya.'}
+        ]}
+    ]},
+
+  /* ---------------- BLOQUE 2 ---------------- */
+  { id:'m4', bloque:2, tipo:'mapa', icono:'🧭', corto:'Mapa 4', titulo:'Mapa 4 de 5 · Ramas de la estadística',
+    contexto:'Une cada <b>definición</b> con su rama o método.',
+    banco:'Definiciones', raiz:'Estadística',
+    ramas:[{key:'descriptiva', hijos:['graficas','resumenes']},{key:'inferencial', hijos:['estimacion','contraste']}],
+    items:[
+      { key:'descriptiva', etiqueta:'Descriptiva', def:'Recolecta, organiza, resume y presenta los datos; sus conclusiones se limitan a los datos que se tienen.' },
+      { key:'inferencial', etiqueta:'Inferencial', def:'Hace generalizaciones y predicciones sobre una población a partir de una muestra; sus resultados incluyen incertidumbre.' },
+      { key:'graficas', etiqueta:'Elaboración de gráficas', def:'Método para representar visualmente los datos: diagramas de barras, de sectores, histogramas…' },
+      { key:'resumenes', etiqueta:'Cálculo de resúmenes', def:'Método para sintetizar los datos en números como la media, la mediana o la moda.' },
+      { key:'estimacion', etiqueta:'Estimación', def:'Método que usa una muestra para aproximar el valor de una característica de la población (un parámetro).' },
+      { key:'contraste', etiqueta:'Contraste de hipótesis', def:'Método que usa una muestra para decidir si una afirmación sobre la población se respalda o se rechaza.' }
+    ]},
+  { id:'m5', bloque:2, tipo:'mapa', icono:'🧭', corto:'Mapa 5', titulo:'Mapa 5 de 5 · Tipos de muestreo',
+    contexto:'Une cada <b>definición</b> con su tipo de muestreo.',
+    banco:'Definiciones', raiz:'Muestreo',
+    ramas:[{key:'probabilistico', hijos:['aleatorio','estratificado','sistematico']},{key:'noprob', hijos:['voluntarios','conveniencia']}],
+    items:[
+      { key:'probabilistico', etiqueta:'Probabilístico', def:'La muestra se elige al azar: cada elemento tiene una probabilidad conocida de quedar seleccionado.' },
+      { key:'noprob', etiqueta:'No probabilístico', def:'La selección no es al azar: depende de la facilidad de acceso o de quien decide participar.' },
+      { key:'aleatorio', etiqueta:'Aleatorio simple', def:'Cada elemento se elige al azar de manera individual, como sacar tarjetas de una urna.' },
+      { key:'estratificado', etiqueta:'Estratificado', def:'Se divide la población en subgrupos (estratos) y de cada uno se eligen al azar sus integrantes.' },
+      { key:'sistematico', etiqueta:'Sistemático', def:'Se elige un punto de arranque al azar en una lista y después se toma un elemento cada cierto número fijo de lugares.' },
+      { key:'voluntarios', etiqueta:'De voluntarios', def:'Participan únicamente quienes aceptan responder la encuesta o formar parte del estudio.' },
+      { key:'conveniencia', etiqueta:'Por conveniencia', def:'Se elige a quienes resultan más fáciles de alcanzar o más baratos de estudiar.' }
+    ]},
+  { id:'cm', bloque:2, tipo:'clasif', icono:'🎯', corto:'Muestreo', titulo:'¿Qué tipo de muestreo se propone?',
+    contexto:'Distintos equipos proponen cómo elegir la <strong>muestra</strong> de su proyecto. Lleva cada <b>propuesta</b> al tipo de muestreo que describe.',
+    banco:'Propuestas',
+    categorias:[
+      { key:'aleatorio', label:'Aleatorio simple', color:'#2B6CB0' }, { key:'estratificado', label:'Estratificado', color:'#2F855A' },
+      { key:'sistematico', label:'Sistemático', color:'#C1443D' }, { key:'voluntarios', label:'De voluntarios', color:'#7C5CBF' },
+      { key:'conveniencia', label:'Por conveniencia', color:'#C17A1F' }
+    ],
+    items:[
+      { texto:'Para saber si la gente se saluda de beso por la derecha, se observa durante tres días a quienes se encuentran en la explanada al llegar a la escuela y se anota de qué lado lo hacen.', cat:'conveniencia' },
+      { texto:'Con las listas de asistencia se arma una lista numerada de todo el alumnado; se elige al azar el lugar S y luego se toma a quien esté en los lugares S + N, S + 2N, S + 3N…', cat:'sistematico' },
+      { texto:'Se escribe el nombre de cada estudiante en una tarjeta, se mezclan en una caja y se sacan al azar tantas tarjetas como se necesitan para la muestra.', cat:'aleatorio' },
+      { texto:'Se envía un correo a todo el alumnado preguntando si asistiría a una kermés y se analizan únicamente las respuestas que llegaron.', cat:'voluntarios' },
+      { texto:'De la lista de cada grupo de la escuela se sortea el mismo número de estudiantes; la suma de todos completa la muestra.', cat:'estratificado' },
+      { texto:'Se publica el enlace de una encuesta de hábitos de estudio en el chat del grupo y la contesta quien quiere hacerlo.', cat:'voluntarios' },
+      { texto:'Se numeran los 600 estudiantes inscritos y un programa genera 60 números al azar; esos estudiantes forman la muestra.', cat:'aleatorio' },
+      { texto:'La escuela tiene 60 % de alumnos en el turno matutino y 40 % en el vespertino; se sortea a quienes se encuestan dentro de cada turno, respetando esas proporciones.', cat:'estratificado' }
+    ]},
+  { id:'cp', bloque:2, tipo:'casos', icono:'🔎', corto:'Casos', titulo:'Casos: censo, ramas, población y muestra',
+    contexto:'Cuatro situaciones reales. Lee cada una con calma antes de elegir.',
+    items:[
+      { texto:'El INEGI hace el <b>Censo</b> de Población y Vivienda cada 10 años. El <b>Conteo</b> de 1995 combinó dos métodos: enumeración en todas las viviendas y una encuesta en una muestra de ellas. Desde el punto de vista de la estadística (no del calendario), ¿cuál es la diferencia fundamental entre un censo y una encuesta por muestreo?',
+        pista:'Piensa en cuántos elementos de la población se observan en cada caso.',
+        opciones:[
+          {texto:'El censo recoge datos de toda la población (todas las viviendas); la encuesta por muestreo solo de una parte (la muestra), y de ella se generaliza a la población.', correcta:true, feedback:'Correcto: censo = observar toda la población; muestreo = observar una muestra y, con ella, hacer inferencias sobre la población.'},
+          {texto:'El censo se levanta en años terminados en cero y el conteo en años terminados en cinco.', feedback:'Esa es una diferencia de calendario, no de estadística. Lo que distingue a los métodos es qué parte de la población se observa.'},
+          {texto:'El censo usa estadística y la encuesta por muestreo no.', feedback:'Ambos usan estadística. De hecho, trabajar con una muestra es lo que da lugar a la estadística inferencial.'},
+          {texto:'El censo nunca tiene errores y la encuesta por muestreo siempre se equivoca.', feedback:'Ninguna de las dos afirmaciones es cierta: un censo también puede tener errores de captura y una muestra bien diseñada da resultados con incertidumbre que se puede calcular.'},
+          {texto:'El censo solo registra datos numéricos y la encuesta solo datos categóricos.', feedback:'Ambos métodos pueden registrar variables cualitativas (por ejemplo, el material de la vivienda) y cuantitativas (por ejemplo, la edad).'}
+        ]},
+      { texto:'Una noticia sobre la tormenta solar de 2012 dice: (i) "la tormenta fue la más poderosa en 150 años", y (ii) tras estudiar las tormentas solares de los últimos 50 años, se estimó en 12 % la probabilidad de que otra semejante ocurra en los próximos 10 años. ¿Qué rama de la estadística corresponde a cada afirmación?',
+        pista:'Una resume lo que ya se registró; la otra va más allá de los datos observados.',
+        opciones:[
+          {texto:'(i) es descriptiva, porque resume lo registrado; (ii) es inferencial, porque a partir de datos pasados predice lo que puede ocurrir, con cierta incertidumbre.', correcta:true, feedback:'Correcto: (i) describe lo observado; (ii) generaliza y predice, y por eso no es 100 % segura.'},
+          {texto:'Ambas son descriptivas, porque usan datos numéricos.', feedback:'Usar números no vuelve descriptiva a una afirmación: la (ii) va más allá de los datos y hace una predicción.'},
+          {texto:'Ambas son inferenciales, porque mencionan periodos de años.', feedback:'La (i) solo resume lo ocurrido; mencionar años no la hace inferencial.'},
+          {texto:'(i) es inferencial y (ii) es descriptiva.', feedback:'Está al revés: la (i) describe lo observado y la (ii) predice un evento futuro.'},
+          {texto:'Ninguna es estadística, porque la noticia trata de astronomía.', feedback:'La estadística se aplica en cualquier área del conocimiento, incluida la astronomía.'}
+        ]},
+      { texto:'Un estudio midió la actividad de 20 000 genes en 185 pacientes con cáncer de próstata (y en 384 tumores experimentales de ratones) para identificar los genes asociados con las formas más agresivas de la enfermedad. ¿Cuál es la descripción más adecuada de población y muestra?',
+        pista:'La población es el conjunto completo sobre el que se quiere concluir; la muestra es la parte que realmente se estudia.',
+        opciones:[
+          {texto:'Población: todos los pacientes con cáncer de próstata; muestra: los 185 pacientes cuyos genes se midieron.', correcta:true, feedback:'Correcto: se quiere concluir sobre todos los pacientes con esa enfermedad (población) usando a 185 de ellos (muestra).'},
+          {texto:'Población: los 185 pacientes; muestra: todos los pacientes con cáncer de próstata.', feedback:'Está invertido: la muestra siempre es un subconjunto de la población, no al revés.'},
+          {texto:'Población: los 20 000 genes; muestra: los 185 pacientes.', feedback:'Los genes son lo que se mide (las variables), no las unidades sobre las que se quiere concluir.'},
+          {texto:'Población y muestra son lo mismo: los 185 pacientes.', feedback:'Solo serían iguales si se hubiera estudiado a todos los pacientes (un censo); aquí se pretende generalizar a todos.'},
+          {texto:'Población: los 384 tumores experimentales de ratones; muestra: los pacientes de Estados Unidos.', feedback:'Los tumores de ratones son otra parte del estudio y no definen a la población de pacientes; además, la muestra no se definió por país.'}
+        ]},
+      { texto:'En 1936, la revista <i>Literary Digest</i> envió cuestionarios a 10 millones de personas tomadas de directorios telefónicos y listas de clubes, y recibió 2.4 millones de respuestas. Pronosticó que Roosevelt obtendría 43 % de los votos, pero en la elección obtuvo 62 %. ¿Por qué falló el pronóstico?',
+        pista:'Piensa en quiénes tenían teléfono o pertenecían a clubes en 1936, y en quiénes decidieron contestar.',
+        opciones:[
+          {texto:'La muestra estuvo sesgada: las listas usadas no representaban a todo el electorado y solo respondieron quienes quisieron hacerlo.', correcta:true, feedback:'Correcto: una muestra enorme pero sesgada no es confiable; importa más cómo se elige la muestra que su tamaño.'},
+          {texto:'Porque 2.4 millones de respuestas es una muestra demasiado pequeña.', feedback:'El tamaño era muy grande; el problema fue que no representaba a toda la población de votantes.'},
+          {texto:'Porque se usó estadística descriptiva en lugar de inferencial.', feedback:'La falla no está en la rama usada, sino en la calidad de la muestra con la que se hizo la inferencia.'},
+          {texto:'Porque la muestra se eligió al azar entre todos los votantes.', feedback:'Al contrario: no se eligió al azar de todo el electorado, sino de listas específicas.'},
+          {texto:'Porque los resultados de una encuesta nunca coinciden con los de una elección.', feedback:'Con muestras bien diseñadas, las encuestas pueden aproximar bien los resultados reales.'}
+        ]}
+    ]},
+  /* Caso de mayor valor. "paso" fija el orden lógico del análisis (área real → estimación → error);
+     las preguntas con el mismo paso se barajan entre sí y las opciones siempre se barajan. */
+  { id:'re', bloque:2, tipo:'casos', rect:true, icono:'📐', corto:'Rectángulos', titulo:'Caso práctico: la población de 12 rectángulos',
+    contexto:'Es el caso de <strong>mayor valor</strong> de la evaluación. La <b>población</b> son los 12 rectángulos de la figura (base y altura en unidades <i>u</i>). Ten a la mano lápiz, papel y calculadora.',
+    apoyo:'rectangulos',
+    items:[
+      { paso:1, texto:'<b>Área real.</b> Con la tabla de los 12 rectángulos, ¿cuál es el <b>área total real</b> de la población, es decir, la suma de las áreas (base × altura) de los 12?',
+        pista:'Calcula primero el área de cada rectángulo (base × altura) y después súmalas.',
+        opciones:[
+          {texto:'256 u²', correcta:true, feedback:'Correcto: 36 + 40 + 30 + 15 + 28 + 12 + 12 + 35 + 30 + 6 + 4 + 8 = 256 u².'},
+          {texto:'112 u²', feedback:'112 resulta de sumar las bases (57) con las alturas (55). El área de cada rectángulo es base × altura, no base + altura.'},
+          {texto:'21.3 u²', feedback:'21.3 u² es el área promedio de un rectángulo (256 ÷ 12), no el área total.'},
+          {texto:'3 135 u²', feedback:'3 135 sale de multiplicar la suma de las bases (57) por la suma de las alturas (55). Hay que multiplicar base × altura rectángulo por rectángulo y luego sumar.'},
+          {texto:'480 u²', feedback:'480 sería 12 veces el área del rectángulo más grande (40); no todos los rectángulos son tan grandes.'}
+        ]},
+      { paso:2, texto:'<b>Estimación y error.</b> El área total real es 256 u². Un equipo toma una <b>muestra aleatoria de 4 rectángulos</b>: el 1, el 3, el 7 y el 10. Calcula el área promedio de esos cuatro, multiplícala por 12 para estimar el área total y obtén el error (real − estimado). ¿Cuál es el resultado?',
+        pista:'Áreas de la muestra: 36, 30, 12 y 6. Saca su promedio y multiplícalo por el número de rectángulos de la población.',
+        opciones:[
+          {texto:'Estimación: 252 u²; error: 4 u².', correcta:true, feedback:'Correcto: promedio = (36 + 30 + 12 + 6) ÷ 4 = 21 u²; estimación = 21 × 12 = 252 u²; error = 256 − 252 = 4 u².'},
+          {texto:'Estimación: 84 u²; error: 172 u².', feedback:'84 es solo la suma de las áreas de los 4 rectángulos de la muestra; falta pasar de la muestra a toda la población (promedio × 12).'},
+          {texto:'Estimación: 21 u²; error: 235 u².', feedback:'21 u² es el promedio por rectángulo; para estimar el área total hay que multiplicarlo por los 12 rectángulos de la población.'},
+          {texto:'Estimación: 336 u²; error: −80 u².', feedback:'336 resulta de multiplicar por 4 la suma de la muestra. Lo correcto es multiplicar el promedio de la muestra por 12.'},
+          {texto:'Estimación: 256 u²; error: 0 u².', feedback:'Una estimación con una muestra rara vez coincide exactamente con el valor real; aquí queda cerca, pero no es igual.'}
+        ]},
+      { paso:3, texto:'<b>Sesgo.</b> Otro equipo eligió "por comodidad" los rectángulos 6, 10, 11 y 12 (los más pequeños). Su estimación del área total (promedio × 12) fue de 90 u², frente a los 256 u² reales. ¿Qué explica una diferencia tan grande?',
+        pista:'Fíjate en qué tipo de rectángulos quedaron fuera de esa muestra.',
+        opciones:[
+          {texto:'La muestra está sesgada: no incluye rectángulos grandes, así que subestima el área total.', correcta:true, feedback:'Correcto: una muestra no representativa deja sin representar a una parte importante de la población y conduce a conclusiones poco confiables.'},
+          {texto:'Fue mala suerte: con cualquier muestra de 4 rectángulos el error sería igual de grande.', feedback:'La muestra aleatoria de los rectángulos 1, 3, 7 y 10 tuvo un error de solo 4 u². El problema aquí no fue el azar, sino la forma de elegir.'},
+          {texto:'El error se debe únicamente a que 4 es un tamaño de muestra muy pequeño.', feedback:'También la muestra aleatoria (1, 3, 7 y 10) tenía 4 rectángulos y dio una buena estimación; lo que cambió fue el criterio de selección.'},
+          {texto:'El método de promediar y multiplicar por 12 no sirve nunca para estimar totales.', feedback:'Sí sirve cuando la muestra es representativa, como ocurrió con la muestra aleatoria de los rectángulos 1, 3, 7 y 10.'},
+          {texto:'No hay diferencia importante: 90 u² y 256 u² son estimaciones equivalentes.', feedback:'La diferencia es de 166 u², más de la mitad del valor real; no son equivalentes.'}
+        ]},
+      { paso:3, texto:'<b>Parámetro y estadístico.</b> En la población de los 12 rectángulos, el área promedio es 256 ÷ 12 ≈ 21.3 u². En la muestra de los rectángulos 1, 3, 7 y 10, el área promedio fue 21 u². ¿Cómo se llaman, respectivamente, estos dos valores?',
+        pista:'Un valor que describe a toda la población y otro que se calcula solo con la muestra reciben nombres distintos.',
+        opciones:[
+          {texto:'21.3 u² es un parámetro (describe la población); 21 u² es un estadístico (describe la muestra).', correcta:true, feedback:'Correcto: el parámetro es una característica de la población y el estadístico, una característica calculada con la muestra; el estadístico se usa para estimar al parámetro.'},
+          {texto:'21.3 u² es un estadístico y 21 u² es un parámetro.', feedback:'Está invertido: el valor de la población es el parámetro y el de la muestra es el estadístico.'},
+          {texto:'Ambos son parámetros.', feedback:'Solo el de la población (21.3 u²) es un parámetro; el de la muestra es un estadístico.'},
+          {texto:'Ambos son estadísticos.', feedback:'Solo el de la muestra (21 u²) es un estadístico; el de la población es un parámetro.'},
+          {texto:'Ambos son muestras.', feedback:'Una muestra es un subconjunto de la población, no un número; estos dos valores son promedios.'}
+        ]}
+    ]}
+];
+
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const $ = (s, r) => (r || document).querySelector(s);
+function el(tag, cls, html){ const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+const limpiar = t => String(t).replace(/<[^>]+>/g, '');
+const r1 = x => Math.round((x + 1e-9) * 10) / 10;
+function fmt(x){ return (Math.round((x + 1e-9) * 100) / 100).toFixed(2).replace(/0$/, ''); }
+function aprox(x){ return (Math.abs(x - Math.round(x * 100) / 100) > 1e-6 ? '≈' : '') + fmt(x); }
+
+/* Normalización de datos: cada reactivo sabe cuál es su destino / respuesta correcta */
+ACTS.forEach(a => {
+  if (a.tipo === 'mapa'){ a.zonas = {}; a.items.forEach(it => { a.zonas[it.key] = it.etiqueta; it.dest = it.key; it.texto = it.def; }); }
+  if (a.tipo === 'clasif'){ a.zonas = {}; a.categorias.forEach(c => { a.zonas[c.key] = c.label; }); a.items.forEach(it => { it.dest = it.cat; }); }
+  if (a.tipo === 'casos'){ a.items.forEach(q => { q.correcta = q.opciones.findIndex(o => o.correcta); }); }
+});
+const BLOQUE_TXT = { 1:'Bloque 1 · Lecciones 1 y 2', 2:'Bloque 2 · Lecciones 3 y 4' };
+const TIPO_TXT = a => a.tipo === 'mapa' ? 'Mapa conceptual' : a.tipo === 'clasif' ? 'Clasificación' : (a.rect ? 'Caso de los rectángulos' : 'Opción múltiple');
+const clave = a => a.tipo === 'casos' ? (a.rect ? 'rect' : 'caso') : a.tipo;
+
+/* ============================================================
+   PONDERACIÓN (escala 0 a 10)
+============================================================ */
+function brutoAct(a){
+  if (a.tipo === 'mapa') return PESOS.mapa;
+  return a.items.length * (a.tipo === 'clasif' ? PESOS.clasificacion : (a.rect ? PESOS.rectangulo : PESOS.caso));
+}
+const BRUTO = ACTS.reduce((s, a) => s + brutoAct(a), 0);
+const FACTOR = 10 / BRUTO;
+const valorAct = a => brutoAct(a) * FACTOR;
+const valorItem = a => valorAct(a) / a.items.length;
+
+/* ============================================================
+   ESTADO DEL INTENTO (se guarda en el dispositivo)
+============================================================ */
+const LS_KEY = 'eyp1_u1_eval_v2', LS_INT = 'eyp1_u1_intentos';
+let S = null;          // estado del intento en curso
+const CTX = {};        // controladores de cada actividad
+
+function ordenDe(a){
+  const idx = a.items.map((_, i) => i);
+  if (!a.items.some(q => q.paso)) return shuffle(idx);
+  const pasos = [...new Set(a.items.map(q => q.paso || 0))].sort((x, y) => x - y);
+  return pasos.flatMap(p => shuffle(idx.filter(i => (a.items[i].paso || 0) === p)));
+}
+function nuevoEstado(alumno){
+  const s = { v:2, alumno, inicio:Date.now(), fin:null, intento:1, pagina:ACTS[0].id, orden:{}, ops:{}, log:{} };
+  ACTS.forEach(a => {
+    s.orden[a.id] = ordenDe(a);
+    s.log[a.id] = a.items.map(() => ({ r:[], ok:false }));
+    if (a.tipo === 'casos') s.ops[a.id] = a.items.map(q => shuffle(q.opciones.map((_, i) => i)));
+  });
+  return s;
+}
+function guardar(){
+  if (!S || S.demo) return;
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) { /* sin almacenamiento: la actividad sigue funcionando */ }
+}
+function cargar(){
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (!s || s.v !== 2 || !s.alumno) return null;
+    if (Date.now() - s.inicio > 12 * 3600 * 1000) return null;   // los intentos guardados caducan a las 12 horas
+    const ok = ACTS.every(a => Array.isArray(s.log[a.id]) && s.log[a.id].length === a.items.length &&
+      Array.isArray(s.orden[a.id]) && s.orden[a.id].length === a.items.length &&
+      (a.tipo !== 'casos' || (s.ops[a.id] && s.ops[a.id].length === a.items.length)));
+    return ok ? s : null;
+  } catch (e) { return null; }
+}
+function borrarGuardado(){ try { localStorage.removeItem(LS_KEY); } catch (e) {} }
+function contarIntento(cuenta){
+  try {
+    const m = JSON.parse(localStorage.getItem(LS_INT) || '{}');
+    m[cuenta] = (m[cuenta] || 0) + 1;
+    localStorage.setItem(LS_INT, JSON.stringify(m));
+    return m[cuenta];
+  } catch (e) { return 1; }
+}
+
+/* ============================================================
+   CÁLCULO DE RESULTADOS
+============================================================ */
+function est(a){
+  const L = S.log[a.id];
+  const hechos = L.filter(x => x.ok).length;
+  const aciertos = L.filter(x => x.ok && x.r.length === 1).length;
+  const fallidos = L.reduce((s, x) => s + x.r.length - (x.ok ? 1 : 0), 0);
+  return { n:L.length, hechos, aciertos, fallidos, completa:hechos === L.length, max:valorAct(a), puntos:aciertos / L.length * valorAct(a) };
+}
+function totales(){
+  const T = { pts:0, aciertos:0, n:0, fallidos:0, hechos:0,
+    b:{ 1:{pts:0,max:0}, 2:{pts:0,max:0} },
+    t:{ mapa:{pts:0,max:0}, clasif:{pts:0,max:0}, caso:{pts:0,max:0}, rect:{pts:0,max:0} } };
+  ACTS.forEach(a => {
+    const e = est(a);
+    T.pts += e.puntos; T.aciertos += e.aciertos; T.n += e.n; T.fallidos += e.fallidos; T.hechos += e.hechos;
+    T.b[a.bloque].pts += e.puntos; T.b[a.bloque].max += e.max;
+    T.t[clave(a)].pts += e.puntos; T.t[clave(a)].max += e.max;
+  });
+  T.cal = r1(T.pts);
+  return T;
+}
+const fechaTxt = () => new Date(S.inicio).toLocaleString('es-MX', { dateStyle:'short', timeStyle:'short' });
+const duracionMin = () => Math.max(1, Math.round(((S.fin || Date.now()) - S.inicio) / 60000));
+
+/* ============================================================
+   ENCABEZADO, AVANCE Y NAVEGACIÓN
+============================================================ */
+let paginaActual = 'registro';
+const desbloqueada = i => !!S && ACTS.slice(0, i).every(a => est(a).completa);
+const todoCompleto = () => !!S && ACTS.every(a => est(a).completa);
+
+function pintarEncabezado(){
+  const nav = $('#steps');
+  if (!nav.children.length){
+    ACTS.forEach((a, i) => {
+      const b = el('button', 'step' + (a.bloque === 2 && ACTS[i - 1].bloque === 1 ? ' b2-ini' : ''));
+      b.type = 'button';
+      b.style.flex = Math.max(valorAct(a), 0.3).toFixed(3) + ' 1 0px';
+      b.addEventListener('click', () => { if (desbloqueada(i)) mostrar(a.id); });
+      nav.appendChild(b);
+    });
+  }
+  ACTS.forEach((a, i) => {
+    const b = nav.children[i];
+    const abierta = desbloqueada(i), hecha = !!S && est(a).completa;
+    b.disabled = !abierta;
+    b.className = b.className.replace(/ (abierto|hecho|activo)/g, '') + (abierta ? ' abierto' : '') + (hecha ? ' hecho' : '') + (paginaActual === a.id ? ' activo' : '');
+    const estado = hecha ? 'completada' : (abierta ? 'disponible' : 'bloqueada');
+    b.title = `${a.corto} · vale ${fmt(valorAct(a))} pts · ${estado}`;
+    b.setAttribute('aria-label', b.title);
+  });
+  $('#scoreTag').innerHTML = S ? `Puntos: <b>${totales().pts.toFixed(1)}</b> / 10` : '';
+  const a = ACTS.find(x => x.id === paginaActual);
+  $('#hdrTitle').textContent = a ? `B${a.bloque} · ${limpiar(a.titulo)}` : (paginaActual === 'cierre' ? 'Resultados' : 'Evaluación integral · Lecciones 1 a 4');
+  medirHeader();
+}
+function medirHeader(){ document.documentElement.style.setProperty('--hdr-h', $('#hdr').offsetHeight + 'px'); }
+window.addEventListener('resize', medirHeader);
+
+function mostrar(id){
+  paginaActual = id;
+  document.body.classList.toggle('en-actividad', ACTS.some(a => a.id === id));
+  document.querySelectorAll('.pagina').forEach(p => p.classList.toggle('active', p.id === 'p-' + id));
+  if (S && ACTS.some(a => a.id === id)){ S.pagina = id; guardar(); }
+  pintarEncabezado();
+  window.scrollTo(0, 0);
+}
+function siguiente(a){
+  const i = ACTS.indexOf(a);
+  if (i < ACTS.length - 1) mostrar(ACTS[i + 1].id);
+  else { mostrarCierre(); mostrar('cierre'); }
+}
+function textoContinuar(a){
+  const i = ACTS.indexOf(a);
+  if (i === ACTS.length - 1) return 'Ver mis resultados →';
+  const sig = ACTS[i + 1];
+  return sig.bloque !== a.bloque ? 'Continuar al Bloque 2 →' : `Continuar: ${sig.corto} →`;
+}
+
+function crearPagina(a){
+  const sec = el('section', 'pagina'); sec.id = 'p-' + a.id;
+  const cls = a.tipo === 'mapa' ? 'bajo' : (a.rect ? 'alto' : '');
+  const extra = a.tipo === 'mapa' ? 'diagnóstico' : (a.rect ? 'mayor valor' : `${a.items.length} × ${fmt(valorItem(a))}`);
+  sec.innerHTML =
+    `<div class="act-top"><span class="bloque-badge"><span class="largo">${BLOQUE_TXT[a.bloque]}</span><span class="corto">Bloque ${a.bloque} · L${a.bloque === 1 ? '1-2' : '3-4'}</span></span>` +
+    `<span class="valor-pill ${cls}">Vale ${fmt(valorAct(a))} pts <small>· ${extra}</small></span></div>` +
+    `<h2>${a.icono} ${a.titulo}</h2><p class="contexto">${a.contexto}</p>`;
+  $('#acts').appendChild(sec);
+  return sec;
+}
+
+/* ============================================================
+   MOTOR DE ARRASTRAR Y SOLTAR (pointer events: dedo, ratón y lápiz)
+   - Arrastrar: la tarjeta "fantasma" sigue al dedo y anuncia la casilla destino.
+   - Tocar: se toca la tarjeta y luego la casilla (sin arrastrar).
+   - Teclado: Tab + Enter sobre tarjeta y casilla.
+============================================================ */
+let D = null;   // arrastre en curso
+
+function zonaEn(ctx, x, y){
+  if (y < $('#hdr').getBoundingClientRect().bottom) return null;
+  const d = ctx.dock.getBoundingClientRect();
+  if (x >= d.left && x <= d.right && y >= d.top && y <= d.bottom) return null;
+  let mejor = null, dist = Infinity;
+  ctx.zonasEl.forEach(z => {
+    if (z.classList.contains('llena')) return;
+    const r = z.getBoundingClientRect();
+    const dx = Math.max(r.left - x, 0, x - r.right), dy = Math.max(r.top - y, 0, y - r.bottom);
+    const dd = Math.hypot(dx, dy);
+    if (dd < dist){ dist = dd; mejor = z; }
+  });
+  return dist <= 16 ? mejor : null;
+}
+function moverFantasma(){
+  const g = D.ghost, w = g.offsetWidth, h = g.offsetHeight;
+  let x, y;
+  if (D.tactil){ x = D.x - w / 2; y = D.y - h - 22; if (y < 4) y = D.y + 30; }
+  else { x = D.x + 14; y = D.y + 14; }
+  x = Math.max(6, Math.min(x, window.innerWidth - w - 6));
+  y = Math.max(4, Math.min(y, window.innerHeight - h - 4));
+  g.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+}
+function marcarZona(){
+  const z = zonaEn(D.ctx, D.x, D.y);
+  if (z !== D.zona){
+    if (D.zona) D.zona.classList.remove('sobre');
+    D.zona = z;
+    if (z) z.classList.add('sobre');
+    D.ghost.classList.toggle('sobre', !!z);
+    D.ghost.firstChild.textContent = z ? '↓ Soltar en: ' + D.ctx.a.zonas[z.dataset.key] : 'Llévala a una casilla';
+  }
+}
+function bucleScroll(){
+  if (!D) return;
+  const hb = $('#hdr').getBoundingClientRect().bottom;
+  const d = D.ctx.dock.getBoundingClientRect();
+  const enBanco = D.x >= d.left && D.x <= d.right && D.y >= d.top && D.y <= d.bottom;
+  if (!enBanco) D.salio = true;
+  /* La página solo se desplaza si el dedo se QUEDA un momento en el borde superior o inferior;
+     así, soltar una tarjeta en una casilla cercana al borde no mueve el tablero. */
+  const BANDA = 28, ESPERA = 260;
+  let dir = 0, prof = 0;
+  if (D.y < hb + BANDA){ dir = -1; prof = hb + BANDA - D.y; }
+  else if (D.salio && D.y > window.innerHeight - BANDA){ dir = 1; prof = D.y - (window.innerHeight - BANDA); }
+  if (dir !== D.dir){ D.dir = dir; D.tBorde = performance.now(); }
+  if (dir && performance.now() - D.tBorde > ESPERA){ window.scrollBy(0, dir * (4 + Math.round(prof / 4))); marcarZona(); }
+  D.raf = requestAnimationFrame(bucleScroll);
+}
+function terminarArrastre(soltar){
+  if (!D) return;
+  const d = D; D = null;
+  cancelAnimationFrame(d.raf);
+  d.ghost.remove();
+  d.chip.classList.remove('arrastrando');
+  document.body.classList.remove('arrastrando');
+  if (d.zona) d.zona.classList.remove('sobre');
+  d.chip._tArrastre = Date.now();
+  if (soltar && d.zona) d.ctx.intentar(d.chip, d.zona);
+}
+document.addEventListener('touchmove', e => { if (D && e.cancelable) e.preventDefault(); }, { passive:false });
+/* Toque sobre una casilla: se atiende en pointerup (no depende del clic sintético) y también con clic/teclado. */
+function alTocar(elem, fn){
+  let p = null, t = 0;
+  elem.addEventListener('pointerdown', e => { p = { id:e.pointerId, x:e.clientX, y:e.clientY }; });
+  elem.addEventListener('pointerup', e => {
+    if (p && p.id === e.pointerId && Math.hypot(e.clientX - p.x, e.clientY - p.y) < 10){ t = Date.now(); fn(); }
+    p = null;
+  });
+  elem.addEventListener('pointercancel', () => { p = null; });
+  elem.addEventListener('click', () => { if (Date.now() - t > 600) fn(); });
+  elem.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fn(); } });
+}
+function hacerArrastrable(chip, ctx){
+  let p = null;
+  chip.addEventListener('pointerdown', e => {
+    if (e.button > 0 || D) return;
+    p = { id:e.pointerId, x0:e.clientX, y0:e.clientY };
+    try { chip.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  chip.addEventListener('pointermove', e => {
+    if (!p || e.pointerId !== p.id) return;
+    if (!D){
+      if (Math.hypot(e.clientX - p.x0, e.clientY - p.y0) < 7) return;
+      ctx.seleccionar(null);
+      const ghost = el('div', 'ghost', '<span class="g-dest">Llévala a una casilla</span><span class="g-text"></span>');
+      ghost.lastChild.textContent = chip.textContent;
+      document.body.appendChild(ghost);
+      chip.classList.add('arrastrando');
+      document.body.classList.add('arrastrando');
+      D = { ctx, chip, ghost, zona:null, x:e.clientX, y:e.clientY, tactil:e.pointerType !== 'mouse', salio:false, raf:0, dir:0, tBorde:0 };
+      D.raf = requestAnimationFrame(bucleScroll);
+    }
+    D.x = e.clientX; D.y = e.clientY;
+    moverFantasma(); marcarZona();
+    e.preventDefault();
+  });
+  chip.addEventListener('pointerup', e => {
+    if (!p || e.pointerId !== p.id) return;
+    p = null;
+    if (D && D.chip === chip){ D.x = e.clientX; D.y = e.clientY; marcarZona(); terminarArrastre(true); }
+    else if (!D){ chip._tToque = Date.now(); ctx.seleccionar(ctx.sel === chip ? null : chip); }   // toque sin arrastre: selecciona
+  });
+  chip.addEventListener('pointercancel', () => { p = null; if (D && D.chip === chip) terminarArrastre(false); });
+  chip.addEventListener('click', () => {
+    if (Date.now() - Math.max(chip._tArrastre || 0, chip._tToque || 0) < 600) return;   // ya se atendió con el dedo o el ratón
+    ctx.seleccionar(ctx.sel === chip ? null : chip);                                      // activación con teclado
+  });
+  /* Al cancelar el touchstart el navegador no genera desplazamientos ni "lanzamientos" (fling) con esta tarjeta:
+     el arrastre queda por completo a cargo de los pointer events de arriba. */
+  chip.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); }, { passive:false });
+  chip.addEventListener('contextmenu', e => e.preventDefault());
+  chip.addEventListener('dragstart', e => e.preventDefault());
+}
+
+/* ============================================================
+   ACTIVIDADES DE ARRASTRAR: MAPAS (una pantalla por mapa) Y CLASIFICACIONES
+============================================================ */
+function crearZona(a, key, cls){
+  const z = el('div', 'zona ' + (cls || ''));
+  z.dataset.key = key; z.tabIndex = 0; z.setAttribute('role', 'button');
+  if (a.tipo === 'mapa'){
+    z.innerHTML = `<span class="z-label">${a.zonas[key]}</span><span class="z-content"></span>`;
+  } else {
+    const c = a.categorias.find(x => x.key === key);
+    z.classList.add('bin');
+    z.innerHTML = `<div class="bin-head"><span class="bin-dot" style="background:${c.color}"></span><span class="z-label">${c.label}</span><span class="bin-count">0</span></div><div class="bin-list"></div>`;
+  }
+  return z;
+}
+function renderArrastre(a){
+  const sec = crearPagina(a);
+  const layout = el('div', 'drag-layout');
+  const board = el('div', 'card board');
+  const zonas = {};
+  if (a.tipo === 'mapa'){
+    const tree = el('div', 'tree' + (a.ramas.some(r => r.hijos) ? '' : ' apila'));
+    tree.appendChild(el('div', 'root-box', a.raiz));
+    tree.appendChild(el('div', 'stem'));
+    const ramas = el('div', 'ramas'); ramas.style.setProperty('--n', a.ramas.length);
+    a.ramas.forEach(r => {
+      const col = el('div', 'rama');
+      col.appendChild(zonas[r.key] = crearZona(a, r.key, r.hijos ? 'rama-z' : ''));
+      if (r.hijos){
+        const h = el('div', 'hijos');
+        r.hijos.forEach(k => h.appendChild(zonas[k] = crearZona(a, k)));
+        col.appendChild(h);
+      }
+      ramas.appendChild(col);
+    });
+    tree.appendChild(ramas);
+    board.appendChild(tree);
+  } else {
+    const bins = el('div', 'bins');
+    a.categorias.forEach(c => bins.appendChild(zonas[c.key] = crearZona(a, c.key)));
+    board.appendChild(bins);
+  }
+  const dock = el('aside', 'card dock');
+  dock.innerHTML =
+    `<div class="dock-head"><span class="dock-title">${a.banco} · ${aprox(valorItem(a))} pts c/u</span><span class="dock-count"></span></div>` +
+    `<div class="dock-msg" aria-live="polite"></div>` +
+    `<div class="dock-body"><button type="button" class="nav-btn prev" aria-label="Tarjeta anterior">‹</button><div class="chips"></div>` +
+    `<button type="button" class="nav-btn next" aria-label="Tarjeta siguiente">›</button></div><div class="dock-done hidden"></div>`;
+  layout.appendChild(board); layout.appendChild(dock); sec.appendChild(layout);
+
+  const MSG_INI = 'Arrastra la tarjeta, o tócala y toca su casilla.';
+  const chipsBox = $('.chips', dock), msgEl = $('.dock-msg', dock);
+  const ctx = CTX[a.id] = {
+    a, sec, board, dock, sel:null, cur:0, zonasEl:Object.values(zonas),
+    restantes(){ return Array.from(chipsBox.children); },
+    msg(t, cls){ msgEl.className = 'dock-msg ' + (cls || ''); msgEl.textContent = t; },
+    seleccionar(chip){
+      if (ctx.sel) ctx.sel.classList.remove('sel');
+      ctx.sel = chip;
+      if (chip){ chip.classList.add('sel'); ctx.msg('Ahora toca la casilla donde va esta tarjeta.'); }
+      else if (!msgEl.classList.contains('ok') && !msgEl.classList.contains('bad')) ctx.msg(MSG_INI);
+      layout.classList.toggle('armado', !!chip);
+    },
+    actualizar(){
+      const rs = ctx.restantes();
+      if (ctx.cur >= rs.length) ctx.cur = 0;
+      rs.forEach((c, i) => c.classList.toggle('current', i === ctx.cur));
+      $('.dock-count', dock).innerHTML = rs.length ? `<span class="solo-movil">tarjeta ${ctx.cur + 1} de ${rs.length}</span><span class="solo-escritorio">faltan ${rs.length}</span>` : '';
+      $('.prev', dock).disabled = $('.next', dock).disabled = rs.length < 2;
+      if (!rs.length) ctx.terminar();
+    },
+    colocar(i){
+      const it = a.items[i], z = zonas[it.dest];
+      if (a.tipo === 'mapa'){ z.classList.add('ok', 'llena'); $('.z-content', z).textContent = it.def; z.setAttribute('aria-label', `${it.etiqueta}: ${it.def}`); }
+      else { $('.bin-list', z).appendChild(el('div', 'bin-item')).textContent = it.texto; $('.bin-count', z).textContent = $('.bin-list', z).children.length + ' ✓'; }
+    },
+    intentar(chip, z){
+      const i = +chip.dataset.i, it = a.items[i], st = S.log[a.id][i], key = z.dataset.key;
+      if (st.ok) return;
+      ctx.seleccionar(null);
+      if (z.classList.contains('llena')){ ctx.msg('Esa casilla ya está completa; elige otra.'); return; }
+      st.r.push(key);
+      if (key === it.dest){
+        st.ok = true;
+        chip.remove();
+        ctx.colocar(i);
+        ctx.msg(st.r.length === 1 ? `✓ ¡Correcto al primer intento! (${aprox(valorItem(a))} pts)` : '✓ Correcto, pero ya no suma: falló el primer intento.', 'ok');
+        ctx.actualizar();
+      } else {
+        z.classList.add('mal'); setTimeout(() => z.classList.remove('mal'), 450);
+        chip.classList.add('rebote'); setTimeout(() => chip.classList.remove('rebote'), 450);
+        ctx.msg(`✗ No corresponde a «${a.zonas[key]}». Inténtalo de nuevo.`, 'bad');
+      }
+      guardar(); pintarEncabezado();
+    },
+    terminar(){
+      const e = est(a);
+      board.classList.add('completo');
+      $('.dock-head', dock).classList.add('hidden'); $('.dock-body', dock).classList.add('hidden'); msgEl.classList.add('hidden');
+      const done = $('.dock-done', dock); done.classList.remove('hidden');
+      done.innerHTML = `<p>✓ ${a.tipo === 'mapa' ? 'Mapa completo' : 'Clasificación completa'}<small>${e.aciertos} de ${e.n} al primer intento · ${fmt(e.puntos)} de ${fmt(e.max)} pts</small></p>`;
+      const b = el('button', 'btn sm', textoContinuar(a)); b.type = 'button';
+      b.addEventListener('click', () => siguiente(a));
+      done.appendChild(b);
+    }
+  };
+  S.orden[a.id].forEach(i => {
+    if (S.log[a.id][i].ok){ ctx.colocar(i); return; }
+    const chip = el('button', 'chip'); chip.type = 'button'; chip.dataset.i = i; chip.textContent = a.items[i].texto;
+    chipsBox.appendChild(chip);
+    hacerArrastrable(chip, ctx);
+  });
+  ctx.zonasEl.forEach(z => {
+    const usar = () => {
+      if (ctx.sel) ctx.intentar(ctx.sel, z);
+      else if (!ctx.restantes().length) return;
+      else if (z.classList.contains('llena')) ctx.msg(a.zonas[z.dataset.key] + ': ' + a.items.find(it => it.key === z.dataset.key).def);   // repasar lo ya colocado
+      else ctx.msg('Primero toca (o arrastra) una tarjeta del banco.');
+    };
+    alTocar(z, usar);
+  });
+  $('.prev', dock).addEventListener('click', () => { const n = ctx.restantes().length; ctx.seleccionar(null); ctx.cur = (ctx.cur - 1 + n) % n; ctx.actualizar(); });
+  $('.next', dock).addEventListener('click', () => { const n = ctx.restantes().length; ctx.seleccionar(null); ctx.cur = (ctx.cur + 1) % n; ctx.actualizar(); });
+  ctx.msg(MSG_INI);
+  ctx.actualizar();
+}
+
+/* ============================================================
+   MATERIAL DE APOYO
+============================================================ */
+const APOYOS = {
+  transporte(){
+    const total = TRANSPORTE.reduce((s, r) => s + r[1], 0);
+    const filas = TRANSPORTE.map(([n, f]) => { const p = (f / total * 100).toFixed(1); return `<tr><td>${n}</td><td>${f}</td><td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div><span class="mono">${p}%</span></div></td></tr>`; }).join('');
+    return el('div', 'card apoyo', `<table class="data-table"><thead><tr><th>Medio de transporte</th><th>Frecuencia</th><th style="text-align:left;">Proporción</th></tr></thead><tbody>${filas}<tr class="total"><td>Total</td><td>${total}</td><td></td></tr></tbody></table>`);
+  },
+  rectangulos(){
+    const cx = [52, 156, 260, 364], cy = [42, 126, 210];
+    const svg = RECTS.map(([b, h], i) => {
+      const w = b * 10, hh = h * 10, x = cx[i % 4], y = cy[Math.floor(i / 4)];
+      const tx = w < 20 ? x + w / 2 + 11 : x;
+      return `<rect x="${x - w / 2}" y="${y - hh / 2}" width="${w}" height="${hh}" fill="${RECT_COLORES[i]}" stroke="#3A5A8C" stroke-width="1"/><text x="${tx}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="600" font-family="Georgia,serif" fill="#16233A">${i + 1}</text>`;
+    }).join('');
+    const tabla = (ini, fin) => `<table class="data-table"><thead><tr><th>N.º</th><th>Base</th><th>Altura</th></tr></thead><tbody>${RECTS.slice(ini, fin).map(([b, h], k) => `<tr><td>${ini + k + 1}</td><td>${b}</td><td>${h}</td></tr>`).join('')}</tbody></table>`;
+    return el('div', 'card apoyo', `<div class="rect-flex"><div class="rect-fig"><svg viewBox="0 0 416 252" role="img" aria-label="Doce rectángulos numerados, dibujados a escala">${svg}</svg></div><div class="rect-tablas">${tabla(0, 6)}${tabla(6, 12)}</div></div><p class="fig-nota">Medidas en unidades <i>u</i> · dibujo a escala · área = base × altura</p>`);
+  }
+};
+
+/* ============================================================
+   PREGUNTAS DE OPCIÓN MÚLTIPLE (una pregunta a la vez)
+============================================================ */
+function renderCasos(a){
+  const sec = crearPagina(a);
+  if (a.apoyo) sec.appendChild(APOYOS[a.apoyo]());
+  const area = el('div', 'q-area'); sec.appendChild(area);
+  const letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const vI = valorItem(a);
+  const ctx = CTX[a.id] = {
+    a, sec,
+    pintar(desplazar){
+      const orden = S.orden[a.id];
+      const pos = orden.findIndex(i => !S.log[a.id][i].ok);
+      area.innerHTML = '';
+      if (pos < 0) ctx.repaso(); else ctx.pregunta(pos);
+      if (desplazar){ const y = area.getBoundingClientRect().top + window.scrollY - $('#hdr').offsetHeight - 10; window.scrollTo(0, Math.max(0, y)); }
+    },
+    pregunta(pos){
+      const orden = S.orden[a.id], i = orden[pos], q = a.items[i], st = S.log[a.id][i];
+      const card = el('div', 'card q-card');
+      card.innerHTML =
+        `<div class="q-meta"><span class="q-num">Pregunta ${pos + 1} de ${orden.length}</span><span class="valor-pill ${a.rect ? 'alto' : ''}">${fmt(vI)} pts</span></div>` +
+        `<p class="q-prompt">${q.texto}</p><div class="q-options" role="group" aria-label="Opciones de respuesta"></div>` +
+        `<button type="button" class="hint-btn">💡 Pista</button><p class="hint-text hidden">${q.pista}</p>` +
+        `<div class="q-feedback hidden" aria-live="polite"></div><div class="q-next hidden"></div>`;
+      const pill = $('.valor-pill', card), opts = $('.q-options', card), fb = $('.q-feedback', card);
+      const perdido = () => { pill.className = 'valor-pill perdido'; pill.textContent = `0 de ${fmt(vI)} pts`; };
+      if (st.r.length) perdido();
+      S.ops[a.id][i].forEach((k, n) => {
+        const op = q.opciones[k];
+        const btn = el('button', 'bubble-option', `<span class="bubble">${letras[n]}</span><span class="op-text">${op.texto}</span>`);
+        btn.type = 'button';
+        if (st.r.includes(k)){ btn.classList.add('is-wrong'); btn.disabled = true; }
+        btn.addEventListener('click', () => {
+          if (st.ok || btn.disabled) return;
+          st.r.push(k);
+          if (k === q.correcta){
+            st.ok = true;
+            btn.classList.add('is-correct');
+            opts.classList.add('resuelta');
+            opts.querySelectorAll('.bubble-option').forEach(b => { b.disabled = true; });
+            fb.textContent = '✓ ' + op.feedback; fb.className = 'q-feedback feedback-correct';
+            if (st.r.length === 1){ pill.className = 'valor-pill ganado'; pill.textContent = `+${fmt(vI)} pts`; }
+            const ultima = orden.every(j => S.log[a.id][j].ok);
+            const nx = $('.q-next', card); nx.classList.remove('hidden');
+            const b = el('button', 'btn sm', ultima ? textoContinuar(a) : 'Siguiente pregunta →'); b.type = 'button';
+            b.addEventListener('click', () => { if (ultima) siguiente(a); else ctx.pintar(true); });
+            nx.appendChild(b);
+          } else {
+            btn.classList.add('is-wrong', 'nuevo'); btn.disabled = true;
+            fb.textContent = '✗ ' + op.feedback + ' Elige otra opción.'; fb.className = 'q-feedback feedback-incorrect';
+            perdido();
+          }
+          guardar(); pintarEncabezado();
+        });
+        opts.appendChild(btn);
+      });
+      $('.hint-btn', card).addEventListener('click', e => { $('.hint-text', card).classList.remove('hidden'); e.target.disabled = true; });
+      area.appendChild(card);
+    },
+    repaso(){
+      const e = est(a);
+      const card = el('div', 'card repaso');
+      const lis = S.orden[a.id].map(i => {
+        const q = a.items[i], st = S.log[a.id][i];
+        const nota = st.r.length === 1 ? `<span class="nota">✓ al primer intento · +${fmt(vI)} pts</span>` : `<span class="nota err">resuelta en ${st.r.length} intentos · 0 pts</span>`;
+        return `<li>${q.texto}<span class="resp">→ ${q.opciones[q.correcta].texto}</span>${nota}</li>`;
+      }).join('');
+      card.innerHTML = `<h3>✓ Actividad completada</h3><p class="contexto" style="margin:0">${e.aciertos} de ${e.n} al primer intento · <b>${fmt(e.puntos)} de ${fmt(e.max)} pts</b></p><ol>${lis}</ol><div class="q-next" style="margin:0 0 12px"></div>`;
+      const b = el('button', 'btn sm', textoContinuar(a)); b.type = 'button';
+      b.addEventListener('click', () => siguiente(a));
+      $('.q-next', card).appendChild(b);
+      area.appendChild(card);
+    }
+  };
+  ctx.pintar(false);
+}
+
+function construir(){
+  $('#acts').innerHTML = '';
+  ACTS.forEach(a => (a.tipo === 'casos' ? renderCasos : renderArrastre)(a));
+}
+
+/* ============================================================
+   TABLAS DE PONDERACIÓN Y DE RESULTADOS
+============================================================ */
+function tablaPonderacion(conResultados){
+  let h = '<table class="pond"><thead><tr><th>Actividad</th>' + (conResultados ? '<th>Aciertos</th><th>Puntos</th>' : '<th>Reactivos</th><th>c/u</th>') + '<th>Vale</th></tr></thead><tbody>';
+  [1, 2].forEach(b => {
+    let max = 0, pts = 0, n = 0, ac = 0;
+    ACTS.filter(a => a.bloque === b).forEach(a => {
+      const e = conResultados ? est(a) : null;
+      max += valorAct(a); n += a.items.length; if (e){ pts += e.puntos; ac += e.aciertos; }
+      h += `<tr class="${a.rect ? 'dest' : ''}"><td>${a.icono} ${a.corto === 'Casos' ? 'Casos (censo, población…)' : a.corto}<span class="tag">${a.tipo === 'mapa' ? 'mapa · diagnóstico' : a.rect ? 'opción múltiple · mayor valor' : TIPO_TXT(a)}</span></td>` +
+        (conResultados ? `<td>${e.aciertos}/${e.n}</td><td>${fmt(e.puntos)}</td>` : `<td>${a.items.length}</td><td>${aprox(valorItem(a))}</td>`) + `<td>${fmt(valorAct(a))}</td></tr>`;
+    });
+    h += `<tr class="sub"><td>${BLOQUE_TXT[b]}</td>` + (conResultados ? `<td>${ac}/${n}</td><td>${fmt(pts)}</td>` : `<td>${n}</td><td></td>`) + `<td>${fmt(max)}</td></tr>`;
+  });
+  const T = conResultados ? totales() : null;
+  h += '<tr class="tot"><td>Calificación final</td>' + (conResultados ? `<td>${T.aciertos}/${T.n}</td><td>${T.cal.toFixed(1)}</td>` : `<td>${ACTS.reduce((s, a) => s + a.items.length, 0)}</td><td></td>`) + '<td>10.0</td></tr></tbody></table>';
+  return h;
+}
+
+/* ============================================================
+   REPORTE: código de verificación, CSV y Microsoft Forms
+============================================================ */
+const SAL = 'EyP1·U1·CCH-Ote';
+function codigo(str){
+  const s = SAL + '|' + str;
+  let h = 5381;
+  for (let i = 0; i < s.length; i++){ h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; }
+  h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0; h ^= h >>> 15;
+  return (h >>> 0).toString(16).toUpperCase().padStart(8, '0');
+}
+/* Detalle compacto: v2;cuenta;calificación;M1=111;…;RE=1121;#CÓDIGO
+   Cada dígito es el número de intentos que necesitó un reactivo (1 = acierto al primer intento),
+   en el orden en que los reactivos están escritos en este archivo (no en el orden aleatorio que vio el alumno). */
+function cadenaDetalle(){
+  const cuerpo = [S.demo ? 'v2-DEMO' : 'v2', S.alumno.cuenta, totales().cal.toFixed(1)]
+    .concat(ACTS.map(a => a.id.toUpperCase() + '=' + S.log[a.id].map(x => Math.min(9, x.r.length)).join(''))).join(';');
+  return cuerpo + ';#' + codigo(cuerpo);
+}
+function analizarDetalle(linea){
+  const m = /^\s*"?(v2[^#]*);#([0-9A-Fa-f]{8})"?\s*$/.exec(linea);
+  if (!m) return null;
+  const partes = m[1].split(';');
+  let pts = 0, completo = true;
+  ACTS.forEach(a => {
+    const par = partes.find(x => x.startsWith(a.id.toUpperCase() + '='));
+    const dig = par ? par.split('=')[1] : '';
+    if (dig.length !== a.items.length) completo = false;
+    pts += (dig.split('').filter(c => c === '1').length / a.items.length) * valorAct(a);
+  });
+  return { demo:partes[0] !== 'v2', cuenta:partes[1], declarada:partes[2], recalculada:r1(pts).toFixed(1), codigoOk:codigo(m[1]) === m[2].toUpperCase(), completo };
+}
+function resumenTxt(){
+  const T = totales();
+  return `Calificación ${T.cal.toFixed(1)}/10 | Bloque 1 (L1-2): ${fmt(T.b[1].pts)}/${fmt(T.b[1].max)} | Bloque 2 (L3-4): ${fmt(T.b[2].pts)}/${fmt(T.b[2].max)} | ` +
+    `Mapas ${fmt(T.t.mapa.pts)}/${fmt(T.t.mapa.max)} | Clasificación ${fmt(T.t.clasif.pts)}/${fmt(T.t.clasif.max)} | Casos ${fmt(T.t.caso.pts)}/${fmt(T.t.caso.max)} | ` +
+    `Rectángulos ${fmt(T.t.rect.pts)}/${fmt(T.t.rect.max)} | ${T.aciertos}/${T.n} aciertos al 1.er intento | ${T.fallidos} intentos fallidos | ${duracionMin()} min | intento ${S.intento}`;
+}
+function datosForms(){
+  return { TOK_NOMBRE:S.alumno.nombre, TOK_CUENTA:S.alumno.cuenta, TOK_GRUPO:S.alumno.grupo, TOK_FECHA:fechaTxt(),
+    TOK_CALIF:totales().cal.toFixed(1), TOK_RESUMEN:resumenTxt(), TOK_DETALLE:cadenaDetalle() };
+}
+const TOKENS = ['TOK_NOMBRE', 'TOK_CUENTA', 'TOK_GRUPO', 'TOK_FECHA', 'TOK_CALIF', 'TOK_RESUMEN', 'TOK_DETALLE'];
+/* Sustituye los marcadores TOK_* del vínculo rellenado previamente por los datos del alumno.
+   Devuelve null (sin configurar), {error} o {url, usados, faltan}. */
+function construirEnlaceForms(datos){
+  const url = (FORMS_PREFILL_URL || '').trim();
+  if (!url) return null;
+  const q = url.indexOf('?');
+  if (q < 0) return { error:'El vínculo del formulario no tiene parámetros (falta lo que va después de «?»).' };
+  let resto = url.slice(q + 1), ancla = '';
+  const h = resto.indexOf('#'); if (h >= 0){ ancla = resto.slice(h); resto = resto.slice(0, h); }
+  const usados = [];
+  const partes = resto.split('&').map(par => {
+    const i = par.indexOf('=');
+    if (i < 0) return par;
+    let v;
+    try { v = decodeURIComponent(par.slice(i + 1)); } catch (e) { return par; }
+    if (!/TOK_[A-Z]+/.test(v)) return par;
+    const json = /^\s*[\["]/.test(v);   // Forms envuelve algunas respuestas entre comillas
+    const nuevo = v.replace(/TOK_[A-Z]+/g, t => {
+      if (!Object.prototype.hasOwnProperty.call(datos, t)) return t;
+      usados.push(t);
+      const d = String(datos[t]);
+      return json ? d.replace(/\\/g, '\\\\').replace(/"/g, '\\"') : d;
+    });
+    return par.slice(0, i) + '=' + encodeURIComponent(nuevo);
+  });
+  if (!usados.length) return { error:'No encontré los marcadores TOK_NOMBRE, TOK_CUENTA… dentro del vínculo del formulario.' };
+  return { url:url.slice(0, q) + '?' + partes.join('&') + ancla, usados, faltan:TOKENS.filter(t => !usados.includes(t)) };
+}
+function textoResultado(){
+  const d = datosForms();
+  return [`Nombre: ${d.TOK_NOMBRE}`, `Cuenta: ${d.TOK_CUENTA}`, `Grupo: ${d.TOK_GRUPO}`, `Fecha y hora: ${d.TOK_FECHA}`,
+    `Calificación: ${d.TOK_CALIF}`, `Resumen: ${d.TOK_RESUMEN}`, `Detalle: ${d.TOK_DETALLE}`].join('\n');
+}
+
+function csvCelda(v){
+  let s = String(v == null ? '' : v);
+  if (/^[=+\-@\t]/.test(s) && isNaN(Number(s))) s = "'" + s;      // evita que Excel lo interprete como fórmula
+  return /[",\r\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function generarCSV(){
+  const T = totales(), fila = arr => arr.map(csvCelda).join(',');
+  const L = [];
+  L.push(fila(['Fecha y hora', 'Nombre', 'Número de cuenta', 'Grupo', 'Calificación final (0-10)', 'Aciertos al 1.er intento', 'Total de reactivos', 'Intentos fallidos',
+    'Duración (min)', 'Intento n.º (en este dispositivo)', 'Bloque 1 (L1-2) puntos', 'Bloque 1 máximo', 'Bloque 2 (L3-4) puntos', 'Bloque 2 máximo',
+    'Mapas (puntos)', 'Clasificación (puntos)', 'Casos (puntos)', 'Rectángulos (puntos)', 'Detalle con código de verificación']));
+  L.push(fila([fechaTxt(), S.alumno.nombre, S.alumno.cuenta, S.alumno.grupo, T.cal.toFixed(1), T.aciertos, T.n, T.fallidos, duracionMin(), S.intento,
+    fmt(T.b[1].pts), fmt(T.b[1].max), fmt(T.b[2].pts), fmt(T.b[2].max), fmt(T.t.mapa.pts), fmt(T.t.clasif.pts), fmt(T.t.caso.pts), fmt(T.t.rect.pts), cadenaDetalle()]));
+  L.push('');
+  L.push(fila(['Bloque', 'Actividad', 'Tipo', 'Reactivos', 'Valor por reactivo', 'Valor total', 'Aciertos al 1.er intento', 'Puntos obtenidos']));
+  ACTS.forEach(a => { const e = est(a); L.push(fila([BLOQUE_TXT[a.bloque], limpiar(a.titulo), TIPO_TXT(a), e.n, valorItem(a).toFixed(4), fmt(e.max), e.aciertos, fmt(e.puntos)])); });
+  L.push('');
+  L.push(fila(['Bloque', 'Actividad', 'N.º', 'Reactivo', 'Respuesta correcta', 'Respuestas del alumno (en orden)', 'Intentos', 'Resultado', 'Valor del reactivo', 'Puntos obtenidos']));
+  ACTS.forEach(a => {
+    a.items.forEach((it, i) => {
+      const st = S.log[a.id][i];
+      const nombre = k => a.tipo === 'casos' ? limpiar(it.opciones[k].texto) : a.zonas[k];
+      const esperado = a.tipo === 'casos' ? nombre(it.correcta) : a.zonas[it.dest];
+      const acierto = st.ok && st.r.length === 1;
+      L.push(fila([BLOQUE_TXT[a.bloque], limpiar(a.titulo), i + 1, (a.tipo === 'mapa' ? 'Definición: ' : '') + limpiar(it.texto), esperado,
+        st.r.map(nombre).join(' | '), st.r.length, acierto ? 'Acierto (1.er intento)' : (st.ok ? 'Error (resuelto en reintento)' : 'Sin resolver'),
+        valorItem(a).toFixed(4), (acierto ? valorItem(a) : 0).toFixed(4)]));
+    });
+  });
+  return '﻿' + L.join('\r\n');
+}
+
+/* ============================================================
+   PANTALLA DE RESULTADOS
+============================================================ */
+function estadoEnvio(msg, clase){ const e = $('#sendStatus'); e.className = 'send-status ' + (clase || ''); e.textContent = msg; return e; }
+function mostrarCierre(){
+  if (!S.fin){ S.fin = Date.now(); guardar(); }
+  const T = totales();
+  $('#cierreNombre').textContent = `${S.alumno.nombre} · cuenta ${S.alumno.cuenta} · grupo ${S.alumno.grupo} · ${fechaTxt()}`;
+  $('#finalScore').innerHTML = `${T.cal.toFixed(1)} <small>/ 10</small>`;
+  $('#finalPct').textContent = `${T.aciertos} de ${T.n} reactivos acertados al primer intento · ${duracionMin()} min · intento ${S.intento}`;
+  $('#sumBloque1').textContent = `${fmt(T.b[1].pts)} / ${fmt(T.b[1].max)}`;
+  $('#sumBloque2').textContent = `${fmt(T.b[2].pts)} / ${fmt(T.b[2].max)}`;
+  $('#tablaResultados').innerHTML = tablaPonderacion(true);
+  const r = construirEnlaceForms(datosForms());
+  if (r){
+    $('#sendBlock').classList.remove('hidden');
+    $('#downloadBtn').classList.add('secondary');
+    $('#csvNote').innerHTML = 'Respaldo: si no puedes enviar el formulario, descarga el archivo <b>resultado_TUCUENTA.csv</b> y mándalo a tu profesor por el medio que te indique.';
+    if (r.error){ $('#sendBtn').removeAttribute('href'); estadoEnvio(r.error + ' Avisa a tu profesor y descarga el CSV como respaldo.', 'warn'); }
+    else $('#sendBtn').href = r.url;
+  }
+}
+$('#sendBtn').addEventListener('click', e => {
+  if (!$('#sendBtn').getAttribute('href')){ e.preventDefault(); return; }
+  estadoEnvio('Se abrió el formulario en otra pestaña. Presiona «Enviar» allá y espera la confirmación. Si no se abrió, permite las ventanas emergentes o usa el respaldo en CSV.', 'ok');
+});
+$('#copyBtn').addEventListener('click', async () => {
+  const txt = textoResultado();
+  let ok = false;
+  try { await navigator.clipboard.writeText(txt); ok = true; }
+  catch (e){
+    const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+    document.body.removeChild(ta);
+  }
+  estadoEnvio(ok ? 'Resultado copiado. Pégalo donde tu profesor te indique.' : 'No se pudo copiar automáticamente; usa el botón de descarga (CSV).', ok ? 'ok' : 'warn');
+});
+$('#downloadBtn').addEventListener('click', () => {
+  const blob = new Blob([generarCSV()], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `resultado_${S.alumno.cuenta || 'reporte'}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+let tReinicio = 0;
+$('#restartBtn').addEventListener('click', e => {
+  if (Date.now() - tReinicio < 4000){ borrarGuardado(); location.reload(); return; }
+  tReinicio = Date.now();
+  e.target.textContent = '¿Seguro? Toca otra vez para borrar este intento';
+  setTimeout(() => { e.target.textContent = 'Reiniciar actividad'; }, 4000);
+});
+
+/* ============================================================
+   REGISTRO DEL ALUMNO E INICIO
+============================================================ */
+function validarRegistro(){
+  const nombre = $('#inNombre').value.trim().replace(/\s+/g, ' ');
+  const cuenta = $('#inCuenta').value.trim();
+  const grupo = $('#inGrupo').value.trim();
+  const vN = nombre.length >= 5 && /\s/.test(nombre), vC = /^\d{8,10}$/.test(cuenta), vG = grupo.length >= 2;
+  $('#f-nombre').classList.toggle('invalid', !vN);
+  $('#f-cuenta').classList.toggle('invalid', !vC);
+  $('#f-grupo').classList.toggle('invalid', !vG);
+  if (!(vN && vC && vG)){ const f = $('.field.invalid input'); if (f) f.focus(); return null; }
+  return { nombre, cuenta, grupo };
+}
+function iniciar(estado, pagina){
+  S = estado;
+  construir();
+  if (pagina === 'cierre') mostrarCierre();
+  mostrar(pagina);
+}
+$('#startBtn').addEventListener('click', () => {
+  const al = validarRegistro();
+  if (!al) return;
+  const s = nuevoEstado(al);
+  s.intento = contarIntento(al.cuenta);
+  S = s; guardar();
+  iniciar(s, ACTS[0].id);
+});
+['inNombre', 'inCuenta', 'inGrupo'].forEach(id => {
+  $('#' + id).addEventListener('keydown', e => { if (e.key === 'Enter') $('#startBtn').click(); });
+  $('#' + id).addEventListener('input', e => e.target.closest('.field').classList.remove('invalid'));
+});
+
+function ofrecerContinuar(g){
+  const box = $('#resumeBox');
+  const hechos = ACTS.reduce((s, a) => s + g.log[a.id].filter(x => x.ok).length, 0), n = ACTS.reduce((s, a) => s + a.items.length, 0);
+  box.classList.remove('hidden');
+  box.innerHTML = `<b>Hay una evaluación guardada en este dispositivo</b><br><span></span><div class="row"></div>`;
+  $('span', box).textContent = `${g.alumno.nombre} · cuenta ${g.alumno.cuenta} · ` + (g.fin ? 'terminada' : `avance: ${hechos} de ${n} reactivos`);
+  const b1 = el('button', 'btn sm', g.fin ? 'Ver mis resultados' : 'Continuar donde me quedé'); b1.type = 'button';
+  b1.addEventListener('click', () => iniciar(g, g.fin ? 'cierre' : g.pagina));
+  const b2 = el('button', 'btn sm ghost-btn', 'Empezar de nuevo'); b2.type = 'button';
+  b2.addEventListener('click', () => { borrarGuardado(); box.classList.add('hidden'); $('#inNombre').focus(); });
+  $('.row', box).appendChild(b1); $('.row', box).appendChild(b2);
+}
+
+/* ============================================================
+   MODO PROFESOR  (abrir la página con  ?profesor=1 )
+============================================================ */
+function estadoDemo(){
+  const s = nuevoEstado({ nombre:'ALUMNO DE PRUEBA', cuenta:'00000000', grupo:'DEMO' });
+  s.demo = true; s.inicio = Date.now() - 27 * 60000;
+  ACTS.forEach(a => a.items.forEach((it, i) => {
+    const bien = a.tipo === 'casos' ? it.correcta : it.dest;
+    const otras = (a.tipo === 'casos' ? it.opciones.map((_, k) => k) : Object.keys(a.zonas)).filter(k => k !== bien);
+    s.log[a.id][i] = { r:Math.random() < 0.8 ? [bien] : [otras[Math.floor(Math.random() * otras.length)], bien], ok:true };
+  }));
+  return s;
+}
+function panelProfesor(){
+  const p = el('div', 'card prof');
+  const r = construirEnlaceForms(Object.fromEntries(TOKENS.map(t => [t, t])));
+  let estado, cls;
+  if (!r){ estado = 'FORMS_PREFILL_URL está vacío: los alumnos solo verán el botón de descarga del CSV.'; cls = 'warn'; }
+  else if (r.error){ estado = r.error; cls = 'warn'; }
+  else if (r.faltan.length){ estado = `Vínculo detectado, pero faltan marcadores: ${r.faltan.join(', ')}. Esas preguntas llegarán vacías.`; cls = 'warn'; }
+  else { estado = 'Vínculo de Forms correcto: se encontraron los 7 marcadores.'; cls = 'ok'; }
+  p.innerHTML =
+    `<h3>👨‍🏫 Modo profesor</h3><p>Este panel solo aparece al abrir la página con <span class="mono">?profesor=1</span>.</p>` +
+    `<p><b>1. Envío a Microsoft Forms</b></p><div class="estado ${cls}">${estado}</div>` +
+    `<p><b>2. Probar sin resolver los ${ACTS.reduce((s, a) => s + a.items.length, 0)} reactivos</b><br>Genera un intento ficticio (ALUMNO DE PRUEBA) para revisar la pantalla de resultados, el CSV y el envío a Forms.</p>` +
+    `<div class="row"><button type="button" class="btn sm" id="demoBtn">Ver resultados con datos de ejemplo</button></div>` +
+    `<p><b>3. Verificar respuestas recibidas</b><br>Copia de Excel la columna <i>Detalle</i> (una o varias celdas) y pégala aquí. Se recalcula la calificación a partir del detalle y se revisa el código.</p>` +
+    `<textarea id="verIn" placeholder="v2;418123456;8.7;M1=111;M2=…;#A1B2C3D4"></textarea>` +
+    `<div class="row"><button type="button" class="btn sm ghost-btn" id="verBtn">Verificar</button></div><div class="tabla-wrap" id="verOut"></div>`;
+  $('#profBox').appendChild(p);
+  $('#demoBtn').addEventListener('click', () => iniciar(estadoDemo(), 'cierre'));
+  $('#verBtn').addEventListener('click', () => {
+    const lineas = $('#verIn').value.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+    let h = '<table class="pond"><thead><tr><th>Cuenta</th><th>Declarada</th><th>Recalculada</th><th>Dictamen</th></tr></thead><tbody>';
+    lineas.forEach(l => {
+      const d = analizarDetalle(l);
+      if (!d){ h += `<tr><td colspan="4">✗ Formato no reconocido: ${limpiar(l).slice(0, 40)}…</td></tr>`; return; }
+      const bien = d.codigoOk && d.completo && d.declarada === d.recalculada && !d.demo;
+      const motivo = d.demo ? '✗ Es un intento de PRUEBA' : !d.codigoOk ? '✗ Código no coincide (texto modificado)' : !d.completo ? '✗ Detalle incompleto' : d.declarada !== d.recalculada ? '✗ Calificación alterada' : '✓ Válido';
+      h += `<tr><td>${limpiar(d.cuenta)}</td><td>${limpiar(d.declarada)}</td><td>${d.recalculada}</td><td style="color:${bien ? '#1E5B3C' : '#8E332C'}">${motivo}</td></tr>`;
+    });
+    $('#verOut').innerHTML = lineas.length ? h + '</tbody></table>' : '';
+  });
+}
+
+/* ============================================================
+   INICIO
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  $('#tablaPesos').innerHTML = tablaPonderacion(false);
+  pintarEncabezado();
+  const g = cargar();
+  if (g) ofrecerContinuar(g);
+  if (/[?&#]profesor(=1)?\b/.test(location.search + location.hash)) panelProfesor();
+});
+</script>
+</body>
+</html>
